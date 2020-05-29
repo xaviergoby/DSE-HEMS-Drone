@@ -1,0 +1,100 @@
+'''
+Functions Related to Calculating the Mass Moment of Inertia Of the Drone and its components
+Originally created on: 29/5/2020 by Raphael
+
+The idea is to be able to input a list of components, with mass, size and position to calculate the overall MMOI of
+the drone. Will include also a c.g. calculator as a prerequisite to finding the MMOI.
+
+Items should be listed as item = ['name', mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_XZ, item_mmoi_XY
+, item_mmoi_YZ]
+
+'name'          = Item name as string
+mass            = Item mass in                      [kg]
+x_pos           = X position of item cg as float    [m]
+y_pos           = Y position of item cg as float    [m]
+z_pos           = Z position of item cg as float    [m]
+item_mmoi_XX    = I_XX of item about its own cg     [m^4]
+item_mmoi_YY    = I_YY of item about its own cg     [m^4]
+item_mmoi_ZZ    = I_ZZ of item about its own cg     [m^4]
+item_mmoi_XZ    = I_ZZ of item about its own cg     [m^4]
+item_mmoi_XY    = I_ZZ of item about its own cg     [m^4]
+item_mmoi_YZ    = I_ZZ of item about its own cg     [m^4]
+'''
+
+
+import numpy as np
+
+class Component:
+
+    components = []
+    fmom_x_tot = 0
+    fmom_y_tot = 0
+    fmom_z_tot = 0
+    mass_tot = 0
+    cg_x = 0
+    cg_y = 0
+    cg_z = 0
+
+    def __init__(self, name, mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_ZZ, item_mmoi_XZ,
+                 item_mmoi_XY,item_mmoi_YZ, included):
+        self.name = name
+        self.mass = mass
+        self.xpos = x_pos
+        self.ypos = y_pos
+        self.zpos = z_pos
+        self.item_mmoi_XX = item_mmoi_XX
+        self.item_mmoi_YY = item_mmoi_YY
+        self.item_mmoi_ZZ = item_mmoi_ZZ
+        self.item_mmoi_XZ = item_mmoi_XZ
+        self.item_mmoi_XY = item_mmoi_XY
+        self.item_mmoi_YZ = item_mmoi_YZ
+        self.included = included
+
+        # First Moments of Mass
+
+        self.fmom_x = self.xpos * self.mass
+        self.fmom_y = self.ypos * self.mass
+        self.fmom_z = self.zpos * self.mass
+
+        # Add First moments of Mass and Mass tot total if the component is included
+
+        if included == 'yes':
+            Component.mass_tot += self.mass
+            Component.fmom_x_tot += self.fmom_x
+            Component.fmom_y_tot += self.fmom_y
+            Component.fmom_z_tot += self.fmom_z
+
+            self.components.append(self)
+
+
+    @classmethod
+    def cg_tot(cls, fmom_x_tot, fmom_y_tot, fmom_z_tot, mass_tot):
+        cls.cg_x = fmom_x_tot/mass_tot
+        cls.cg_y = fmom_y_tot/mass_tot
+        cls.cg_z = fmom_z_tot/mass_tot
+
+    @classmethod
+    def create_from_list(cls, component_list):
+        name, mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_ZZ, item_mmoi_XZ, \
+        item_mmoi_XY, item_mmoi_YZ, included = [i for i in component_list]
+        return cls(name, mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_ZZ, item_mmoi_XZ,
+        item_mmoi_XY, item_mmoi_YZ, included)
+
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    # a component list should be: ['name', mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_ZZ, item_mmoi_XZ,
+    #         item_mmoi_XY, item_mmoi_YZ, 'included']
+    component_list_test = ['propeller', 1, 0.5, 0.5, 0.5, 1, 1, 1, 1, 1, 1, 'yes']
+    component1 = Component.create_from_list(component_list_test)
+    print(vars(component1))
+    print(Component.cg_tot(Component.fmom_x_tot, Component.fmom_y_tot, Component.fmom_z_tot, Component.mass_tot))
+    print(vars(Component))
+
