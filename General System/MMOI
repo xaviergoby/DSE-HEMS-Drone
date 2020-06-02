@@ -5,25 +5,15 @@ Originally created on: 29/5/2020 by Raphael
 The idea is to be able to input a list of components, with mass, size and position to calculate the overall MMOI of
 the drone. Will include also a c.g. calculator as a prerequisite to finding the MMOI.
 
-Items should be listed as item = ['name', mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_XZ, item_mmoi_XY
-, item_mmoi_YZ]
 
-'name'          = Item name as string
-mass            = Item mass in                      [kg]
-x_pos           = X position of item cg as float    [m]
-y_pos           = Y position of item cg as float    [m]
-z_pos           = Z position of item cg as float    [m]
-item_mmoi_XX    = I_XX of item about its own cg     [m^4]
-item_mmoi_YY    = I_YY of item about its own cg     [m^4]
-item_mmoi_ZZ    = I_ZZ of item about its own cg     [m^4]
-item_mmoi_XZ    = I_ZZ of item about its own cg     [m^4]
-item_mmoi_XY    = I_ZZ of item about its own cg     [m^4]
-item_mmoi_YZ    = I_ZZ of item about its own cg     [m^4]
 '''
 
 
 import numpy as np
+#To be redone with Google Sheets integration
 
+
+'''
 class Component:
 
     components = []
@@ -79,7 +69,7 @@ class Component:
         item_mmoi_XY, item_mmoi_YZ, included = [i for i in component_list]
         return cls(name, mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_ZZ, item_mmoi_XZ,
         item_mmoi_XY, item_mmoi_YZ, included)
-
+'''
 
 
 
@@ -90,6 +80,7 @@ class Component:
 
 
 if __name__ == '__main__':
+    '''
     # a component list should be: ['name', mass, x_pos, y_pos, z_pos, item_mmoi_XX, item_mmoi_YY, item_mmoi_ZZ, item_mmoi_XZ,
     #         item_mmoi_XY, item_mmoi_YZ, 'included']
     component_list_test = ['propeller', 1, 0.5, 0.5, 0.5, 1, 1, 1, 1, 1, 1, 'yes']
@@ -97,4 +88,4 @@ if __name__ == '__main__':
     print(vars(component1))
     print(Component.cg_tot(Component.fmom_x_tot, Component.fmom_y_tot, Component.fmom_z_tot, Component.mass_tot))
     print(vars(Component))
-
+    '''
