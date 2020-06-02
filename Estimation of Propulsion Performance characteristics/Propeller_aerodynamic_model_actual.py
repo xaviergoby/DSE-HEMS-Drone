@@ -2,6 +2,7 @@
 # Takes geometry of propeller as input for power, thrust and drag estimations.
 
 import numpy as np
+from scipy.optimize import least_squares
 import matplotlib.pyplot as plt
 '''
 Inputs: 
@@ -24,6 +25,9 @@ AR                              = Aspect Ratio
 theta_0                         = Theta at r = 0
 '''
 
+def A_disk_calc(R_prop):
+    return np.pi*(R_prop**2)
+
 # 'Near Ideal' Propeller Thrust
 # Syntax checked
 def Thrust_calc(N_b, rho, c_tip, R_prop, w_mot, Cl_0, mu, Cl_alpha, theta_tip, lamb_):
@@ -33,7 +37,7 @@ def Thrust_calc(N_b, rho, c_tip, R_prop, w_mot, Cl_0, mu, Cl_alpha, theta_tip, l
 # Rotor hub/shaft advance ratio mu in direction of V_h
 # Syntax checked
 def mu_vh(v_ind_h, V_h, w_mot, R_prop):
-    mu = np.linalg.norm(v_ind_h + V_h)/(w_mot * R_prop)
+    mu = (np.linalg.norm(v_ind_h)+np.linalg.norm(V_h))/(w_mot * R_prop)
     return mu
 
 # Induced advance ratio
@@ -115,43 +119,63 @@ def power_calc(rho, N_b, c, w_motor, R_prop, Z, thrust, kappa, lamb_i, lamb_z, H
     power = (1/8)*rho*N_b*c*(w_motor**3)*(R_prop**4)*Z + (thrust*(kappa*lamb_i - lamb_z) - H_force*(kappa*mu_ind + mu_h))*w_motor*R_prop
     return power
 
-if __name__ == '__main__':
-    N_b = 2
-    rho = 1.225
-    c_tip = 0.03
-    R_prop = 0.185
-    w_mot = 700
-    Cl_0 = 0.1
-    V_x, V_y, V_z = 2, 2, 0
-    V_h = np.array([V_x, V_y, 0])
-    v_ind_x, v_ind_y, v_ind_z = 0, 0, 0
-    v_ind_h = np.array([v_ind_x, v_ind_y, 0])
-    AR = 10
-    e_osw = 0.7
-    Cd_0 = 0.2
-    kappa = 1
-    c = 0.04
-    mu = mu_vh(v_ind_h, V_h, w_mot, R_prop)
-    lamb_ = lamb_calc(v_ind_z, V_z, w_mot, R_prop)
-    Cl_alpha = 2*np.pi
-    theta_tip = np.deg2rad(1)
-    theta_0 = np.deg2rad(1)
-    a1 = a1_calc(theta_0, mu, lamb_)
-    kai = Kai_factor_calc(Cl_0, lamb_, Cl_alpha, theta_tip, theta_0)
+def induced_opt_func(v_i, T, H, A_disk, rho, V_h, V_z):
+    return np.array([T-  2*rho*A_disk*v_i[1]*np.sqrt((v_i[0] + V_h)**2 + (v_i[1] - V_z)**2), H - 2*rho*A_disk*v_i[0]*np.sqrt((v_i[0] + V_h)**2 + (v_i[1] - V_z)**2)])
 
-    K_factor = K_factor_calc(AR, e_osw)
-    zeta = zeta_calc(Cd_0, K_factor, Cl_0, Cl_alpha, mu, theta_tip, a1, lamb_)
-    H_force = H_force_calc(N_b, rho, c_tip, w_mot, R_prop, mu, zeta, kai)
-    T_force = Thrust_calc(N_b, rho, c_tip, R_prop, w_mot, Cl_0, mu, Cl_alpha, theta_tip, lamb_)
-    delta_tau = delta_tau_calc(Cd_0, K_factor, Cl_0, Cl_alpha, mu, theta_tip, a1, lamb_)
-    Z_factor = Z_factor_calc(Cd_0, K_factor, Cl_0, Cl_alpha, theta_tip, lamb_, mu, delta_tau)
-    mu_ind = mu_vh_i(v_ind_h, w_mot, R_prop)
-    mu_h = mu_vh_h(V_h, w_mot, R_prop)
-    lamb_z = lamb_calc_z(V_z, w_mot, R_prop)
-    lamb_ind = lamb_calc_ind(v_ind_z, w_mot, R_prop)
-    power = power_calc(rho, N_b, c, w_mot, R_prop, Z_factor, T_force, kappa, lamb_ind, lamb_z, H_force, mu_ind, mu_h)
-    # Converge the induced velocity
-    print(H_force)
+if __name__ == '__main__':
+    v_ind_x, v_ind_y, v_ind_z = 1, 1, 1
+    v_ind_h = np.linalg.norm(np.array([v_ind_x, v_ind_y, 0]))
+
+    v_i = np.array([np.linalg.norm(v_ind_h), v_ind_z])
+    for i in range(0, 100):
+
+        N_b = 2
+        rho = 1.225
+        c_tip = 0.01
+        R_prop = 0.22
+        A_disk = A_disk_calc(R_prop)
+        w_mot = 700
+        Cl_0 = 0.1
+        V_x, V_y, V_z = -2, -2, 0
+        V_h = np.array([V_x, V_y, 0])
+        V_h_norm = np.linalg.norm(V_h)
+        AR = 10
+        e_osw = 0.7
+        Cd_0 = 0.2
+        kappa = 1
+        c = 0.04
+        mu = mu_vh(v_ind_h, V_h, w_mot, R_prop)
+        lamb_ = lamb_calc(v_ind_z, V_z, w_mot, R_prop)
+        Cl_alpha = 2*np.pi
+        theta_tip = np.deg2rad(1)
+        theta_0 = np.deg2rad(6)
+        a1 = a1_calc(theta_0, mu, lamb_)
+        kai = Kai_factor_calc(Cl_0, lamb_, Cl_alpha, theta_tip, theta_0)
+
+        K_factor = K_factor_calc(AR, e_osw)
+        zeta = zeta_calc(Cd_0, K_factor, Cl_0, Cl_alpha, mu, theta_tip, a1, lamb_)
+        H_force = H_force_calc(N_b, rho, c_tip, w_mot, R_prop, mu, zeta, kai)
+        T_force = Thrust_calc(N_b, rho, c_tip, R_prop, w_mot, Cl_0, mu, Cl_alpha, theta_tip, lamb_)
+        delta_tau = delta_tau_calc(Cd_0, K_factor, Cl_0, Cl_alpha, mu, theta_tip, a1, lamb_)
+        Z_factor = Z_factor_calc(Cd_0, K_factor, Cl_0, Cl_alpha, theta_tip, lamb_, mu, delta_tau)
+        mu_ind = mu_vh_i(v_ind_h, w_mot, R_prop)
+        mu_h = mu_vh_h(V_h, w_mot, R_prop)
+        lamb_z = lamb_calc_z(V_z, w_mot, R_prop)
+        lamb_ind = lamb_calc_ind(v_ind_z, w_mot, R_prop)
+        power = power_calc(rho, N_b, c, w_mot, R_prop, Z_factor, T_force, kappa, lamb_ind, lamb_z, H_force, mu_ind, mu_h)
+        # Converge to the induced velocity using non linear least squares
+
+
+        least_sol = least_squares(induced_opt_func, v_i, method = 'dogbox', args=(T_force, H_force, A_disk, rho, V_h_norm, V_z)).x
+        #print(least_squares(induced_opt_func, v_i, method = 'dogbox', args=(T_force, H_force, A_disk, rho, V_h_norm, V_z)))
+        v_ind_h = least_sol[0]
+        v_ind_z = least_sol[1]
+        v_i = np.array([v_ind_h, v_ind_z])
+        print(T_force)
+        print(H_force)
+        #print(v_i)
+        #print(T_force)
+        print(v_i)
 
 
 
