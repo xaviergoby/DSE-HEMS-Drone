@@ -39,6 +39,7 @@ R_m = 0.101 # in Ohms
 ### ESC (Electronic speed converter) parameters
 I_e_max = 30 # Max ESC current in Amps
 R_e = 0.008 # Internal resistance of ESC in Ohms
+I_c = 1 # Control current supplied to the flight controller in Amps, usually 1 A.
 #G_e = blah # Weight of ESC, not really relevant for this calculations since we start with total weight
 
 ### Battery parameters
@@ -61,15 +62,15 @@ def f_C_M (B_p = B_p, D_p = D_p, H_p = H_p, W_p = W_p):
 
 ### Motor Model Equations
 
-def f_U_m (M, N, K_V0 = K_V0, I_m_max = I_m_max, I_m0 = I_m0, U_m0 = U_m0, R_m = R_m, G_m = G_m):
+def f_U_m (M, N, K_V0 = K_V0, I_m_max = I_m_max, I_m0 = I_m0, U_m0 = U_m0, R_m = R_m):
     return R_m * ( (M * K_V0 * U_m0)/(9.55 * (U_m0 -  I_m0 * R_m) ) + I_m0) + N * (U_m0 - I_m0 * R_m) / (K_V0 * U_m0)
 
-def f_I_m (M, N, K_V0 = K_V0, I_m_max = I_m_max, I_m0 = I_m0, U_m0 = U_m0, R_m = R_m, G_m = G_m):
+def f_I_m (M, N, K_V0 = K_V0, I_m_max = I_m_max, I_m0 = I_m0, U_m0 = U_m0, R_m = R_m):
     return (M * K_V0 * U_m0) / (9.55 * (U_m0 - I_m0 * R_m)) + I_m0
 
 ### ESC Model Equations
 
-def f_sigma (U_m, I_m, U_b, I_e_max = I_e_max, R_e = R_e):
+def f_sigma (U_m, I_m, U_b = U_b, I_e_max = I_e_max, R_e = R_e):
     return (U_m + I_m * R_e) / U_b
 
 def f_I_e (sigma, I_m):
@@ -80,5 +81,5 @@ def f_U_e (I_b, C_b = C_b, R_b = R_b, U_b = U_b, K_b = K_b):
 
 ### Battery Model Equations
 
-def f_T_b (C_min, C_b = C_b, R_b = R_b, U_b = U_b, K_b = K_b):
-    return (C_b - C_min)/I_b * (60) / (1000)  # Note conversion factor included to output minutes, assuming C_b in mAh
+def f_T_b (I_b, C_min = C_min, C_b = C_b, R_b = R_b, U_b = U_b, K_b = K_b):
+    return (C_b - C_min)/I_b * ((60) / (1000))  # Note conversion factor included to output minutes, assuming C_b in mAh
