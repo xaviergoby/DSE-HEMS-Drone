@@ -1,5 +1,6 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import numpy as np
 
 # use creds to create a client to interact with the Google Drive API
 scope = ['https://spreadsheets.google.com/feeds',
@@ -52,3 +53,21 @@ for column in list_of_hashes:
 
 # update the cells in the sheet
 sheet.update('H2', cellvalues)
+
+# todo: Calculate mass moment of inertia for each piece
+InertiaTensor = np.zeros((3, 3))
+
+# calculate Steiner term
+for column in list_of_hashes:
+    InertiaTensor = InertiaTensor + [[(column.get('mass [kg]') * column.get('Xb [m]') * column.get('Xb [m]')),
+                                      (column.get('mass [kg]') * column.get('Xb [m]') * column.get('Yb [m]')),
+                                      (column.get('mass [kg]') * column.get('Xb [m]') * column.get('Zb [m]'))],
+                                     [(column.get('mass [kg]') * column.get('Yb [m]') * column.get('Xb [m]')),
+                                      (column.get('mass [kg]') * column.get('Yb [m]') * column.get('Yb [m]')),
+                                      (column.get('mass [kg]') * column.get('Yb [m]') * column.get('Zb [m]'))],
+                                     [(column.get('mass [kg]') * column.get('Zb [m]') * column.get('Xb [m]')),
+                                      (column.get('mass [kg]') * column.get('Zb [m]') * column.get('Yb [m]')),
+                                      (column.get('mass [kg]') * column.get('Zb [m]') * column.get('Zb [m]'))]]
+    print(InertiaTensor)
+# update the cells in the sheet
+sheet.update('L5', InertiaTensor.tolist())
