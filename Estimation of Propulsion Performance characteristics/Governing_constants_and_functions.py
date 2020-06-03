@@ -58,7 +58,7 @@ def f_C_T (B_p = B_p, D_p = D_p, H_p = H_p, W_p = W_p):
     return 0.25 * np.pi**3 * zeta ** 2 * B_p * K_0 * (epsilon * np.arctan(H_p/(np.pi * D_p))-alpha_0)/(np.pi * A + K_0)
 
 def f_C_M (B_p = B_p, D_p = D_p, H_p = H_p, W_p = W_p):
-    return (1/8 * A) * np.pi ** 2 * C_d * zeta ** 2 * lambd * B_p ** 2
+    return (1/(8 * A)) * np.pi ** 2 * C_d * zeta ** 2 * lambd * B_p ** 2
 
 ### Motor Model Equations
 

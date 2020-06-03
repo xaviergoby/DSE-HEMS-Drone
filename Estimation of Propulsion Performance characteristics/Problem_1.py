@@ -17,7 +17,7 @@ U_e = G.f_U_e(I_b)
 
 T_b = G.f_T_b(I_b=I_b)
 print('Hovering endurance is:', T_b, ' minutes')
-print('Duty cycle is:', sigma, '%')
+print('Duty cycle is:', sigma * 100, '%')
 print('Propeller RPM is:', N )
 print('ESC current is', I_e, 'A')
 
