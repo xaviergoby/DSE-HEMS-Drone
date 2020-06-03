@@ -1,3 +1,5 @@
+from typing import Optional, Any
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import numpy as np
@@ -36,7 +38,7 @@ center_of_gravity = {'x': cgx,
                      'y': cgy,
                      'z': cgz}
 # update the corresponding cell G2
-sheet.update('G2', str(center_of_gravity))
+sheet.update('K2', str(center_of_gravity))
 
 # update the positions of components with respect to the center of gravity
 
@@ -52,22 +54,27 @@ for column in list_of_hashes:
     cellvalues.append([column['Xb [m]'], column['Yb [m]'], column['Zb [m]']])
 
 # update the cells in the sheet
-sheet.update('H2', cellvalues)
+sheet.update('L2', cellvalues)
 
-# todo: Calculate mass moment of inertia for each piece
+# Calculate mass moment of inertia for each piece
 InertiaTensor = np.zeros((3, 3))
+m = column.get('mass [kg]')
+
+if column['shape'] = 'Solid cuboid of width w, height h, depth d':
+    w = column.get('w or r [m]')
+    d = column.get('d [m]')
+    h = column.get('h [m]')
+    #InertiaTensor = InertiaTensor + 1./12.*np.array([[m*x*x, m*x*y, m*x*z],
+    #                                                [m*y*x, m*y*y, m*y*z],
+    #                                                [m*z*x, m*z*y, m*z*z]])
 
 # calculate Steiner term
 for column in list_of_hashes:
-    InertiaTensor = InertiaTensor + [[(column.get('mass [kg]') * column.get('Xb [m]') * column.get('Xb [m]')),
-                                      (column.get('mass [kg]') * column.get('Xb [m]') * column.get('Yb [m]')),
-                                      (column.get('mass [kg]') * column.get('Xb [m]') * column.get('Zb [m]'))],
-                                     [(column.get('mass [kg]') * column.get('Yb [m]') * column.get('Xb [m]')),
-                                      (column.get('mass [kg]') * column.get('Yb [m]') * column.get('Yb [m]')),
-                                      (column.get('mass [kg]') * column.get('Yb [m]') * column.get('Zb [m]'))],
-                                     [(column.get('mass [kg]') * column.get('Zb [m]') * column.get('Xb [m]')),
-                                      (column.get('mass [kg]') * column.get('Zb [m]') * column.get('Yb [m]')),
-                                      (column.get('mass [kg]') * column.get('Zb [m]') * column.get('Zb [m]'))]]
-    print(InertiaTensor)
+    m = column.get('mass [kg]')
+    x = column.get('Xb [m]')
+    y = column.get('Yb [m]')
+    z = column.get('Zb [m]')
+    InertiaTensor = InertiaTensor + np.array([[m*x*x, m*x*y, m*x*z],[m*y*x, m*y*y, m*y*z],[m*z*x, m*z*y, m*z*z]])
+
 # update the cells in the sheet
-sheet.update('L5', InertiaTensor.tolist())
+sheet.update('P5', InertiaTensor.tolist())
