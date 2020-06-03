@@ -2,7 +2,7 @@
 # Takes geometry of propeller as input for power, thrust and drag estimations.
 
 import numpy as np
-from scipy.optimize import least_squares
+from scipy.optimize import least_squares, minimize, basinhopping
 import matplotlib.pyplot as plt
 '''
 Inputs: 
@@ -120,10 +120,10 @@ def power_calc(rho, N_b, c, w_motor, R_prop, Z, thrust, kappa, lamb_i, lamb_z, H
     return power
 
 def induced_opt_func(v_i, T, H, A_disk, rho, V_h, V_z):
-    return np.array([T-  2*rho*A_disk*v_i[1]*np.sqrt((v_i[0] + V_h)**2 + (v_i[1] - V_z)**2), H - 2*rho*A_disk*v_i[0]*np.sqrt((v_i[0] + V_h)**2 + (v_i[1] - V_z)**2)])
+    return abs(T-  2*rho*A_disk*v_i[1]*np.sqrt((v_i[0] + V_h)**2 + (v_i[1] - V_z)**2)) + abs(((H - 2*rho*A_disk*v_i[0]*np.sqrt((v_i[0] + V_h)**2 + (v_i[1] - V_z)**2))))
 
 if __name__ == '__main__':
-    v_ind_x, v_ind_y, v_ind_z = 1, 1, 1
+    v_ind_x, v_ind_y, v_ind_z = 3, 3, 3
     v_ind_h = np.linalg.norm(np.array([v_ind_x, v_ind_y, 0]))
 
     v_i = np.array([np.linalg.norm(v_ind_h), v_ind_z])
@@ -131,12 +131,12 @@ if __name__ == '__main__':
 
         N_b = 2
         rho = 1.225
-        c_tip = 0.01
-        R_prop = 0.22
+        c_tip = 0.015
+        R_prop = 0.13
         A_disk = A_disk_calc(R_prop)
-        w_mot = 700
-        Cl_0 = 0.1
-        V_x, V_y, V_z = -2, -2, 0
+        w_mot = 500
+        Cl_0 = 0.15
+        V_x, V_y, V_z = 2, 2, 0
         V_h = np.array([V_x, V_y, 0])
         V_h_norm = np.linalg.norm(V_h)
         AR = 10
@@ -165,9 +165,10 @@ if __name__ == '__main__':
         power = power_calc(rho, N_b, c, w_mot, R_prop, Z_factor, T_force, kappa, lamb_ind, lamb_z, H_force, mu_ind, mu_h)
         # Converge to the induced velocity using non linear least squares
 
+        minimizer_kwargs = {"method" : "BFGS", "args" : (T_force, H_force, A_disk, rho, V_h_norm, V_z)}
+        least_sol = basinhopping(induced_opt_func, v_i, minimizer_kwargs = minimizer_kwargs, niter = 100).x
 
-        least_sol = least_squares(induced_opt_func, v_i, method = 'dogbox', args=(T_force, H_force, A_disk, rho, V_h_norm, V_z)).x
-        #print(least_squares(induced_opt_func, v_i, method = 'dogbox', args=(T_force, H_force, A_disk, rho, V_h_norm, V_z)))
+        print(basinhopping(induced_opt_func, v_i, minimizer_kwargs = minimizer_kwargs, niter = 100))
         v_ind_h = least_sol[0]
         v_ind_z = least_sol[1]
         v_i = np.array([v_ind_h, v_ind_z])
@@ -176,6 +177,8 @@ if __name__ == '__main__':
         #print(v_i)
         #print(T_force)
         print(v_i)
-
+        print((T_force-  2*rho*A_disk*v_i[1]*np.sqrt((v_i[0] + V_h_norm)**2 + (v_i[1] - V_z)**2)))
+        print(H_force - 2*rho*A_disk*v_i[0]*np.sqrt((v_i[0] + V_h_norm)**2 + (v_i[1] - V_z)**2))
+        print(power)
 
 
