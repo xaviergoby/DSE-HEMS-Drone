@@ -111,6 +111,11 @@ for column in list_of_hashes:
 # update the cells in the sheet
 sheet.update('K2', cellvalues)
 
+#re import sheet to get new values # lazy method
+sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
+# Extract all of the values into a dictionary
+list_of_hashes = sheet.get_all_records()
+
 # Calculate mass moment of inertia for each component
 InertiaTensor = np.zeros((3, 3))
 for column in list_of_hashes:
