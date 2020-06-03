@@ -5,6 +5,26 @@ EXTERNPROTO MarkerProto [
 ]
 "asbWaypointMarker.wrl#MarkerProto" 
 
+EXTERNPROTO PROTO_1 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_2 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_3 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_4 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_5 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
 DEF LineTransform Transform {
   children DEF LineShape Shape {
     appearance DEF LineAppearance Appearance {
@@ -613,7 +633,7 @@ DEF LineTransform Transform {
           85.8192 16.15 62.756,
           85.8477 16.15 62.7018,
           85.8768 16.15 62.6478,
-          85.9062 16.15 62.594,
+          85.9063 16.15 62.594,
           85.9362 16.15 62.5405,
           85.9666 16.15 62.4873,
           85.9975 16.15 62.4343,
