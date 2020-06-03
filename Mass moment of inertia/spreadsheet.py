@@ -20,7 +20,14 @@ def import_spreadsheet(sheetname):
 
 
 def center_of_gravity(m, x, y, z):
-    # calculate center of gravity using the weighted average
+    """
+    calculate center of gravity using the weighted average
+    :param m: numpy array or list containing floats with masses
+    :param x: numpy array or list containing floats with x coordinates
+    :param y: numpy array or list containing floats with y coordinates
+    :param z: numpy array or list containing floats with z coordinates
+    :return:
+    """
     cgx = 0.0
     cgy = 0.0
     cgz = 0.0
