@@ -21,4 +21,3 @@ print('Duty cycle is:', sigma * 100, '%')
 print('Propeller RPM is:', N )
 print('ESC current is', I_e, 'A')
 
-
