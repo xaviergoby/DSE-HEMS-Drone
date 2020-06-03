@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-rotate_speed = 360 #deg/s
+rotate_speed = 2* 360 #deg/s
 resolution = 1.4 #deg
 fov = 90 #deg
 pixels = fov / resolution
@@ -14,6 +14,8 @@ def get_distance(size):
     return size / np.sin(np.deg2rad(resolution))
 
 distance_object = get_distance(size)
+# Spacing_measure is the spacing between a point when first scanned and when scanned again
+# from a different spot
 spacing_measure = np.sqrt(1.5 * 360 / (rotate_speed ) * velocity - fly_height)
 plt.plot(velocity, spacing_measure)
 plt.show()
