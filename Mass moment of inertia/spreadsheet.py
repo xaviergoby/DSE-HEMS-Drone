@@ -5,15 +5,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 import numpy as np
 
 
-# normalize function
-# copied directly from https://stackoverflow.com/questions/21030391/how-to-normalize-an-array-in-numpy
-def normalize(v):
-    norm = np.linalg.norm(v)
-    if norm == 0:
-        return v
-    return v / norm
-
-
 def import_spreadsheet(sheetname):
     # the data is stored in list of hashes as a list containing dict(ionarie)s by the import script
     # use creds to create a client to interact with the Google Drive API
@@ -27,13 +18,6 @@ def import_spreadsheet(sheetname):
     sheet = client.open(sheetname).sheet1
     return sheet
 
-
-sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
-# Extract and print all of the values
-list_of_hashes = sheet.get_all_records()
-
-
-# print(list_of_hashes)
 
 def center_of_gravity(m, x, y, z):
     # calculate center of gravity using the weighted average
@@ -49,21 +33,6 @@ def center_of_gravity(m, x, y, z):
     return float(cgx / sum(m)), float(cgy / sum(m)), float(cgz / sum(m))
 
 
-#
-m = np.array(sheet.get('B2:B999'), dtype=float)
-x = np.array(sheet.get('C2:C999'), dtype=float)
-y = np.array(sheet.get('D2:D999'), dtype=float)
-z = np.array(sheet.get('E2:E999'), dtype=float)
-
-
-c_o_g = center_of_gravity(m, x, y, z)
-# update the corresponding cell G2
-sheet.update('J2', str(c_o_g))
-
-
-# update the positions of components with respect to the center of gravity
-
-
 def vehicle_to_body_reference_frame(x_v, y_v, z_v, cg):
     """This is the position of the components with respect to the body axis system: origin is the Center of gravity,
     x lies in the symmetry plane and points forward, z lies in the symmetry plane and points downward, y from the
@@ -74,15 +43,6 @@ def vehicle_to_body_reference_frame(x_v, y_v, z_v, cg):
     y_b = cg[1] - x_v
     z_b = cg[2] + z_v
     return x_b, y_b, z_b
-
-
-cellvalues = []
-for column in list_of_hashes:
-    Xb, Yb, Zb = vehicle_to_body_reference_frame(column.get("x [m]"), column.get("y [m]"), column.get("z [m]"),c_o_g)
-    cellvalues.append([Xb, Yb, Zb])
-
-# update the cells in the sheet
-sheet.update('K2', cellvalues)
 
 
 def mass_moment_of_inertia_cuboid(mass, width, depth, height):
@@ -100,16 +60,6 @@ def mass_moment_of_inertia_cuboid(mass, width, depth, height):
                                 [0.0, 0.0, mass * (width ** 2 + height ** 2)]])
 
 
-# Calculate mass moment of inertia for each component
-InertiaTensor = np.zeros((3, 3))
-for column in list_of_hashes:
-    m = column.get('mass [kg]')
-    w = column.get('w [m]')
-    d = column.get('d [m]')
-    h = column.get('h [m]')
-    InertiaTensor = InertiaTensor + mass_moment_of_inertia_cuboid(m, w, d, h)
-
-
 def mass_moment_of_inertia_steiner(mass, x, y, z):
     """
 
@@ -120,8 +70,48 @@ def mass_moment_of_inertia_steiner(mass, x, y, z):
     :return: nparray inertia tensor
     """
     return np.array(
-        [[mass * x * x, mass * x * y, mass * x * z], [mass * y * x, mass * y * y, mass * y * z], [mass * z * x, mass * z * y, mass * z * z]])
+        [[mass * x * x, mass * x * y, mass * x * z], [mass * y * x, mass * y * y, mass * y * z],
+         [mass * z * x, mass * z * y, mass * z * z]])
 
+
+"""Start of the script"""
+#import sheet
+sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
+# Extract all of the values into a dictionary
+list_of_hashes = sheet.get_all_records()
+
+# print(list_of_hashes)
+
+
+# convert the columns to floats
+m = np.array(sheet.get('B2:B999'), dtype=float)
+x = np.array(sheet.get('C2:C999'), dtype=float)
+y = np.array(sheet.get('D2:D999'), dtype=float)
+z = np.array(sheet.get('E2:E999'), dtype=float)
+
+c_o_g = center_of_gravity(m, x, y, z)
+# update the corresponding cell G2
+sheet.update('J2', str(c_o_g))
+
+# update the positions of components with respect to the center of gravity
+
+
+cellvalues = []
+for column in list_of_hashes:
+    Xb, Yb, Zb = vehicle_to_body_reference_frame(column.get("x [m]"), column.get("y [m]"), column.get("z [m]"), c_o_g)
+    cellvalues.append([Xb, Yb, Zb])
+
+# update the cells in the sheet
+sheet.update('K2', cellvalues)
+
+# Calculate mass moment of inertia for each component
+InertiaTensor = np.zeros((3, 3))
+for column in list_of_hashes:
+    m = column.get('mass [kg]')
+    w = column.get('w [m]')
+    d = column.get('d [m]')
+    h = column.get('h [m]')
+    InertiaTensor = InertiaTensor + mass_moment_of_inertia_cuboid(m, w, d, h)
 
 # calculate Steiner term
 for column in list_of_hashes:
