@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 C1 = 3
 C2 = 1.5
 S = 0.1 # They never say what number they use for area which is really annoying so we'll have to experiment
-theta_max = 60 * np.pi/180 # max pitch angle, later we can just take this from the calcuation done in max_load_estimation
+theta_max = 53 * np.pi/180 # max pitch angle, later we can just take this from the calcuation done in max_load_estimation
 
 def V (theta):
     return np.sqrt( (2 * G.W * np.tan(theta)) / (G.rho * S * (C1 * (1 - (np.cos(theta)) ** 3) + C2 * (1 - (np.sin(theta)) ** 3))) )
@@ -39,7 +39,7 @@ def T_fly(theta):
 def range(theta):
     return 60 * V(theta) * T_fly(theta)
 
-theta_values = np.linspace(0, theta_max, 200)
+theta_values = np.linspace(0, theta_max, 300)
 
 Data_V = V(theta_values)
 Data_T_fly = T_fly(theta_values)
@@ -47,7 +47,11 @@ Data_range = 60 * V(theta_values) * T_fly(theta_values)
 
 print(I_b(0))
 print(N(0))
-print(Data_V)
+#print(Data_V)
 #print(Data_T_fly)
 print('Max speed is', V(theta_max), 'm/s')
 print('Max range is', max(Data_range), 'm')
+
+indx = np.where(Data_range == max(Data_range))[0]
+print('Pitch for max range is', theta_values[indx] * 180/np.pi, 'degrees')
+print('Velocity for max range is', Data_V[indx], 'm/s')
