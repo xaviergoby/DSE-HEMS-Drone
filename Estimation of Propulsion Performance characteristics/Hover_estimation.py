@@ -22,8 +22,12 @@ I_b = G.n_r * I_e + G.I_c
 U_e = G.f_U_e(I_b)
 
 T_b = G.f_T_b(I_b=I_b)
+eff = (2 * np.pi * G.n_r * M * N)/(G.U_b * I_b * 60)
 print('Hovering endurance is:', T_b, ' minutes')
 print('Duty cycle is:', sigma * 100, '%')
 print('Propeller RPM is:', N )
 print('ESC current is', I_e, 'A')
+print('ESC voltage is', U_e, 'V')
+print('Battery current is', I_b, 'A')
+print('Efficiency is', eff * 100, '%')
 
