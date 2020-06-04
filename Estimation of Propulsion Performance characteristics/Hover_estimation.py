@@ -23,6 +23,7 @@ U_e = G.f_U_e(I_b)
 
 T_b = G.f_T_b(I_b=I_b)
 eff = (2 * np.pi * G.n_r * M * N)/(G.U_b * I_b * 60)
+print('Thrust coefficient is ', G.f_C_T())
 print('Hovering endurance is:', T_b, ' minutes')
 print('Duty cycle is:', sigma * 100, '%')
 print('Propeller RPM is:', N )
