@@ -28,7 +28,8 @@ eff = (2 * np.pi * G.n_r * M * N)/(G.U_b * I_b * 60)
 T = G.f_C_T() * G.rho * (N/60) ** 2 * G.D_p ** 4
 T_b = G.f_T_b(I_b=I_b)
 
-print('Max thrust endurance is:', T_b, ' minutes')
+print('Endurance at max thrust is:', T_b, ' minutes')
+print('Max thrust to weight ratio is', T * G.n_r/G.W)
 print('Propeller RPM is:', N )
 print('ESC current is', I_e, 'A')
 print('ESC voltage is', U_e, 'V')

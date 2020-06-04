@@ -3,6 +3,8 @@ from typing import Optional, Any, Dict, List, Union
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import numpy as np
+from shapely import geometry, ops
+import matplotlib.pyplot as plt
 
 
 def import_spreadsheet(sheetname):
@@ -82,7 +84,7 @@ def mass_moment_of_inertia_steiner(mass, x, y, z):
 
 
 """Start of the script"""
-#import sheet
+# import sheet
 sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
 # Extract all of the values into a dictionary
 list_of_hashes = sheet.get_all_records()
@@ -111,7 +113,7 @@ for column in list_of_hashes:
 # update the cells in the sheet
 sheet.update('K2', cellvalues)
 
-#re import sheet to get new values # lazy method
+# re import sheet to get new values # lazy method
 sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
 # Extract all of the values into a dictionary
 list_of_hashes = sheet.get_all_records()
@@ -135,3 +137,57 @@ for column in list_of_hashes:
 
 # update the cells in the sheet
 sheet.update('O5', InertiaTensor.tolist())
+
+# find the frontal area of the drone
+
+# create a Polygon object for each cuboid
+rects = []
+area = 0.0
+for column in list_of_hashes:
+    # find bounding points
+    left = column.get('Xb [m]') - (column.get('w [m]') / 2.)
+    right = column.get('Xb [m]') + (column.get('w [m]') / 2.)
+    bottom = column.get('Zb [m]') - (column.get('h [m]') / 2.)
+    top = column.get('Zb [m]') + (column.get('h [m]') / 2.)
+    rect = geometry.Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
+    x, y = rect.exterior.xy
+    plt.fill(x, y, alpha=0.5, fc='red', ec='black')
+    plt.axis('square')
+    area = area + rect.area
+    rects.append(rect)
+plt.show()
+
+
+frontal_area = ops.unary_union(rects)
+
+# find the overlapped area
+
+# update the corresponding cell R2
+sheet.update('R2', str(frontal_area.area))
+# find the top area of the drone
+
+# create a Polygon object for each cuboid
+rects = []
+area = 0.0
+for column in list_of_hashes:
+    # find bounding points
+    left = column.get('Xb [m]') - (column.get('w [m]') / 2.)
+    right = column.get('Xb [m]') + (column.get('w [m]') / 2.)
+    bottom = column.get('Yb [m]') - (column.get('d [m]') / 2.)
+    top = column.get('Yb [m]') + (column.get('d [m]') / 2.)
+    rect = geometry.Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
+    x, y = rect.exterior.xy
+    plt.fill(x, y, alpha=0.5, fc='green', ec='black')
+    plt.axis('square')
+    area = area + rect.area
+    rects.append(rect)
+plt.show()
+
+
+top_area = ops.unary_union(rects)
+
+# find the overlapped area
+
+# update the corresponding cell S2
+sheet.update('S2', str(top_area.area))
+print("The script has finished.")
