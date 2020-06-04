@@ -5,6 +5,37 @@ EXTERNPROTO MarkerProto [
 ]
 "asbWaypointMarker.wrl#MarkerProto" 
 
+<<<<<<< Updated upstream
+=======
+EXTERNPROTO PROTO_1 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_2 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_3 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_4 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_5 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_6 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+EXTERNPROTO PROTO_7 [
+]
+"asbWaypointMarker.wrl#MarkerProto" 
+
+>>>>>>> Stashed changes
 DEF LineTransform Transform {
   children DEF LineShape Shape {
     appearance DEF LineAppearance Appearance {
