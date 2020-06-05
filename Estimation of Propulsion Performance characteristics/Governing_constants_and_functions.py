@@ -62,34 +62,43 @@ C_min = 0.2 * C_b # Basically just calculating minimum battery capacity assuming
 
 ### Propeller Model equations
 
+# Drag coefficient, estimated from paper and other coefficients/factors
 C_d = C_fd + ((np.pi * A * K_0 ** 2) * (epsilon * np.arctan(H_p/(np.pi * D_p))-alpha_0) ** 2)/(e * (np.pi * A + K_0) ** 2)
 
+# Thrust coefficient, uses blade number, propeller diameter and pitch as inputs, plus correction factors/coefficients
 def f_C_T (B_p = B_p, D_p = D_p, H_p = H_p, W_p = W_p):
     return 0.25 * np.pi**3 * lambd * zeta ** 2 * B_p * K_0 * ((epsilon * np.arctan(H_p/(np.pi * D_p))-alpha_0)/(np.pi * A + K_0))
 
+# Torque coefficient, uses same inputs as thrust coefficient
 def f_C_M (B_p = B_p, D_p = D_p, H_p = H_p, W_p = W_p):
     return (1/(8 * A)) * np.pi ** 2 * C_d * zeta ** 2 * lambd * B_p ** 2
 
 ### Motor Model Equations
 
+# Motor equivalent voltage
 def f_U_m (M, N, K_V0 = K_V0, I_m_max = I_m_max, I_m0 = I_m0, U_m0 = U_m0, R_m = R_m):
     return R_m * ( (M * K_V0 * U_m0)/(9.55 * (U_m0 -  I_m0 * R_m) ) + I_m0) + N * (U_m0 - I_m0 * R_m) / (K_V0 * U_m0)
 
+# Motor equivalent current
 def f_I_m (M, N, K_V0 = K_V0, I_m_max = I_m_max, I_m0 = I_m0, U_m0 = U_m0, R_m = R_m):
     return (M * K_V0 * U_m0) / (9.55 * (U_m0 - I_m0 * R_m)) + I_m0
 
 ### ESC Model Equations
 
+# Duty Cycle
 def f_sigma (U_m, I_m, U_b = U_b, I_e_max = I_e_max, R_e = R_e):
     return (U_m + I_m * R_e) / U_b
 
+# ESC current
 def f_I_e (sigma, I_m):
     return sigma * I_m
 
+# ESC voltage
 def f_U_e (I_b, C_b = C_b, R_b = R_b, U_b = U_b, K_b = K_b):
     return U_b - I_b * R_b
 
 ### Battery Model Equations
 
+# Time to discharge the battery, equivalent to endurance basically
 def f_T_b (I_b, C_min = C_min, C_b = C_b, R_b = R_b, U_b = U_b, K_b = K_b):
     return (C_b - C_min)/I_b * ((60) / (1000))  # Note conversion factor included to output minutes, assuming C_b in mAh
