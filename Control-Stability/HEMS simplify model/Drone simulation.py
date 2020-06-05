@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 import scipy.io
 g=9.81
 m=10
-L1=1
-L2=1
-Ix=10
-Iy=10
-Iz=10
-c=1
+L1=0.158
+L2=0.158
+Ix=1.77*10**(-2)
+Iy=2.2*10**(-2)
+Iz=4.48*10**(-2)
+c=1 #need to figure this out ->thrust coefficient
 
 #T1=
 #output pitch roll yaw
