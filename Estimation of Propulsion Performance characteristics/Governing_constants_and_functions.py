@@ -29,21 +29,21 @@ R = 287.05 # Gas constant of air
 rho = p/(R*Temp) # ISA sea-level density kg/m^3
 
 # General Parameters
-W = 14.7 # Total weight in Newtons
+W = 3.5 * g # Total weight in Newtons
 n_r = 4
 
 # Propeller parameters
 B_p = 2 # Nunmber of blades, optimal is 2 from research
-D_p = 10 * 0.0254 # Propeller diameter in m (the 0.0254 is conversion from in. to m)
+D_p = 15 * 0.0254 # Propeller diameter in m (the 0.0254 is conversion from in. to m)
 H_p = 4.5 * 0.0254 # Propeller pitch in m
 W_p = 0.01502525 * g # Weight of propeller in N, not really relevant since we start with total weight
 
 # Motor parameters
-K_V0 = 890 # Nominal no-load motor constant in r/min/V (RPM/V, revolutions per minute per volt)
-I_m_max = 19 # Maximum motor current in Amps
-I_m0 = 0.5 # Motor nominal no-load current in Amps
-U_m0 = 10 # Motor nominal no-load voltage in Volts
-R_m = 0.101 # Motor resistance in Ohms
+K_V0 = 490 # Nominal no-load motor constant in r/min/V (RPM/V, revolutions per minute per volt)
+I_m_max = 27 # Maximum motor current in Amps
+I_m0 = 0.53 # Motor nominal no-load current in Amps
+U_m0 = 15 # Motor nominal no-load voltage in Volts
+R_m = 0.111 # Motor resistance in Ohms
 #G_m = blah # # Weight of Motor, not really relevant for this calculations since we start with total weight
 
 ### ESC (Electronic speed converter) parameters
@@ -53,9 +53,9 @@ I_c = 1 # Control current supplied to the flight controller in Amps, usually 1 A
 #G_e = blah # Weight of ESC, not really relevant for this calculations since we start with total weight
 
 ### Battery parameters
-C_b = 5000 # Battery capacity in mAh
+C_b = 2 * 4250 # Battery capacity in mAh
 R_b = 0.0078 # Battery internal resistance in Ohms
-U_b = 11.1 # Battery voltage in Volts
+U_b = 22.8 # Battery voltage in Volts
 K_b = 45 # Maximum discharge rate in Coulombs
 C_min = 0.2 * C_b # Basically just calculating minimum battery capacity assuming a DoD, in this case assuming 80% DoD
 #G_b = blah # Also irrelevant like the others for now
@@ -67,11 +67,11 @@ C_d = C_fd + ((np.pi * A * K_0 ** 2) * (epsilon * np.arctan(H_p/(np.pi * D_p))-a
 
 # Thrust coefficient, uses blade number, propeller diameter and pitch as inputs, plus correction factors/coefficients
 def f_C_T (B_p = B_p, D_p = D_p, H_p = H_p, W_p = W_p):
-    return 0.25 * np.pi**3 * lambd * zeta ** 2 * B_p * K_0 * ((epsilon * np.arctan(H_p/(np.pi * D_p))-alpha_0)/(np.pi * A + K_0))
+    return 0.11 # 0.25 * np.pi**3 * lambd * zeta ** 2 * B_p * K_0 * ((epsilon * np.arctan(H_p/(np.pi * D_p))-alpha_0)/(np.pi * A + K_0))
 
 # Torque coefficient, uses same inputs as thrust coefficient
 def f_C_M (B_p = B_p, D_p = D_p, H_p = H_p, W_p = W_p):
-    return (1/(8 * A)) * np.pi ** 2 * C_d * zeta ** 2 * lambd * B_p ** 2
+    return  (1/(8 * A)) * np.pi ** 2 * C_d * zeta ** 2 * lambd * B_p ** 2
 
 ### Motor Model Equations
 
