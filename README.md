@@ -5,6 +5,12 @@
 **Faculty:** Aerospace Engineer    
 **Program/Degree:** Bachelors of Aerospace Engineer (BSc AE)
 
+**Description:**     
+To design a drone capable of performing a reconnaissance of the law few hundred meters of an approach 
+(by a HEMS helicopter) to ensure the operation safety of the approach and the landing of a HEMS helicopter
+operating in Instrument Meteorological Conditions (IMC).
+
+
 <ins>Team Members:</ins>    
 - Jilles Andringa
 - Tijmen Brinkhof
