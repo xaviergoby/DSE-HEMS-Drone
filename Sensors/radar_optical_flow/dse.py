@@ -7,8 +7,8 @@ Created on Tue Jun  2 11:24:21 2020
 
 # Python client example to get Lidar data from a drone
 #
-
-import setup_path 
+from Sensors.radar_optical_flow import setup_path
+# import setup_path
 import airsim
 
 import sys
