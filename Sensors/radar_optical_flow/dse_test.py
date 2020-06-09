@@ -100,7 +100,9 @@ class LidarTest:
                         scan[index] = np.add(point,translation)
                     self.scans = np.vstack((self.scans,scan))
                     self.movement = np.add(self.movement,translation)
-                    vis.add_geometry(o3d.utility.Vector3dVector(scan))
+                    scan_cloud = o3d.geometry.PointCloud()
+                    scan_cloud.points = o3d.utility.Vector3dVector(scan_cloud)
+                    vis.add_geometry(o3d.utility.Vector3dVector(scan_cloud))
                     vis.update_geometry(source)
                     vis.update_renderer()
 #                if not hasattr(self,'distances'):

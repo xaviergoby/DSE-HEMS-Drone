@@ -27,7 +27,7 @@ I_b = G.n_r * I_e + G.I_c
 U_e = G.f_U_e(I_b=I_b)
 eff = (2 * np.pi * G.n_r * M * N)/(G.U_b * I_b * 60)
 T = G.f_C_T() * G.rho * (N/60) ** 2 * G.D_p ** 4
-print(T)
+# print(T)
 T_b = G.f_T_b(I_b=I_b)
 blah = (G.W/(G.n_r * T))
 pitch_max = np.arccos(float(G.W/(G.n_r * T)))

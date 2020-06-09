@@ -83,6 +83,16 @@ def mass_moment_of_inertia_steiner(mass, x, y, z):
          [mass * z * x, mass * z * y, mass * z * z]])
 
 
+def width_of_landing_gear_from_tip_over_angle(tip_over_angle, cg_z):
+    tip_over_angle_radians = tip_over_angle / 180 * np.pi
+    return 2 * np.tan(tip_over_angle_radians) * cg_z
+
+
+def tip_over_angle_from_width_of_landing_gear(width_of_landing_gear, cg_z):
+    tip_over_angle_radians = np.arctan((width_of_landing_gear / 2) / cg_z)
+    return tip_over_angle_radians * 180 / np.pi
+
+
 """Start of the script"""
 # import sheet
 sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
@@ -99,8 +109,9 @@ y = np.array(sheet.get('D2:D999'), dtype=float)
 z = np.array(sheet.get('E2:E999'), dtype=float)
 
 c_o_g = center_of_gravity(m, x, y, z)
+c_o_g_for_cell = [[c_o_g[0]], [c_o_g[1]], [c_o_g[2]]]
 # update the corresponding cell G2
-sheet.update('J2', str(c_o_g))
+sheet.update('J2', c_o_g_for_cell)
 
 # update the positions of components with respect to the center of gravity
 
@@ -157,7 +168,6 @@ for column in list_of_hashes:
     rects.append(rect)
 plt.show()
 
-
 frontal_area = ops.unary_union(rects)
 
 # find the overlapped area
@@ -182,7 +192,6 @@ for column in list_of_hashes:
     area = area + rect.area
     rects.append(rect)
 plt.show()
-
 
 top_area = ops.unary_union(rects)
 
