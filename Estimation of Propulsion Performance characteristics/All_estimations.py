@@ -1,3 +1,9 @@
+
+'''
+This is not finished but you can run the four individual estimation programs individually already,
+just change the constants/parameters in the Governing_constants_and_equations.py file.
+'''
+
 import PySimpleGUI as sg
 
 sg.theme('BluePurple')

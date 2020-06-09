@@ -59,6 +59,7 @@ print('Max range is', max(Data_range), 'm')
 indx = np.where(Data_range == max(Data_range))[0]
 print('Pitch for max range is', theta_values[indx] * 180/np.pi, 'degrees')
 print('Velocity for max range is', Data_V[indx], 'm/s')
+print(N(theta_values[indx]))
 plt.plot(theta_values * 180/np.pi, Data_C_D)
 plt.show()
-print(C_D(5*np.pi/180))
+print(C_D(0*np.pi/180))
