@@ -38,7 +38,7 @@ BS=Rm*(d/2)/I_x
 BS=BS/10**6
 print (BS,"MPa")
 #%% The V beam
-def Vbeam(a,d):
+def Vbeam(a,d,maxT,Wa):
     #Section 1 is defined as the section coming out of the sidewall of the drone
     # Section 2 is defined as the section connecting 1 and the landing gear+rotor
     # Assume negligble aeroloads
@@ -62,16 +62,18 @@ def Vbeam(a,d):
     
     #Now for a test, the original thrust force should also give the last 2 results
     # in the origin
-    TT=np.cos(alpha*np.pi/180)*Ls2*Ry_ls2
+    TT=-np.cos(alpha*np.pi/180)*Ls2*Ry_ls2
+    TMoment= Ry_ls2*(Ls1+np.sin(alpha*np.pi/180)*Ls2)
     if (TT-T_s2)/T_s2<0.05 and (TT-T_s2)/T_s2>-0.05:
         print("Torque test pass")
     else:
         print("problems!!!!!!!!")
-    TMoment= Ry_ls2*(Ls1+np.sin(alpha*np.pi/180)*Ls2)
+        print (TT,T_s2)
     if ((TMoment-M_O)/M_O)<0.05 and ((TMoment-M_O)/M_O)>-0.05:
         print("Moment test pass")
     else:
           print("problems!!!!!!!!")
+          
     aeroload=(Ls1+Ls2)
     print(M_s2,"N*m max moment on s2(applied at end of s1)")
     print(T_s2,"N*m Torque")
@@ -80,11 +82,11 @@ def Vbeam(a,d):
     return Ls1,Ls2,Ls1_h,aeroload
     
 #%%
-
+maxingf=100
 for i in range (1,58):
     print ("current i:", i)
-    Ls1,Ls2,Ls1_h,aeroload=Vbeam(i,0.02)
+    Ls1,Ls2,Ls1_h,aeroload=Vbeam(i,0.02,maxT,Wa)
     if aeroload<maxingf:
         maxingf=aeroload
         itest=i
-# The helicopter attachment
+#%% The helicopter attachment
