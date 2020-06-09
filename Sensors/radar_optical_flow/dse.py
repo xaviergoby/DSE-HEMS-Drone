@@ -7,8 +7,8 @@ Created on Tue Jun  2 11:24:21 2020
 
 # Python client example to get Lidar data from a drone
 #
-
-import setup_path 
+from Sensors.radar_optical_flow import setup_path
+# import setup_path
 import airsim
 
 import sys
@@ -32,112 +32,107 @@ class LidarTest:
         self.client = airsim.MultirotorClient()
         self.client.confirmConnection()
         self.client.enableApiControl(True)
-        self.movement = np.array([0.,0.,0.])
+        self.position = np.array([0.,0.,0.])
         
         
 
     def execute(self):
-
+        vis = o3d.visualization.VisualizerWithEditing()
+        vis.create_window()
+        
+        mesh_sphere = o3d.geometry.TriangleMesh.create_sphere(radius=1.0)
+        mesh_sphere.paint_uniform_color([0.9, 0.1, 0.1])
+        
+        
         print("arming the drone...")
         self.client.armDisarm(True)
-
-        state = self.client.getMultirotorState()
-        s = pprint.pformat(state)
-        #print("state: %s" % s)
-
-#        airsim.wait_key('Press any key to takeoff')
         self.client.takeoffAsync().join()
 
-        state = self.client.getMultirotorState()
-        #print("state: %s" % pprint.pformat(state))
-
-
-#        self.client.hoverAsync().join()
-
+#        state = self.client.getMultirotorState()
         self.client.moveToPositionAsync(-20, 140, -30, 5)
         
-        
-        for i in range(35):
-            lidarData = self.client.getLidarData();
-            if (len(lidarData.point_cloud) < 3):
-                print("\tNo points received from Lidar data")
-            else:
-                scan = self.parse_lidarData(lidarData)
-                print("\tReading %d: time_stamp: %d number_of_points: %d" % (i, lidarData.time_stamp, len(scan)))
-                print("\t\tlidar position: %s" % (pprint.pformat(lidarData.pose.position)))
-                print("\t\tlidar orientation: %s" % (pprint.pformat(lidarData.pose.orientation)))
-                
-                if not hasattr(self,'scans'):
-                    self.scans = scan
+        i = 0
+        prev_millis = int(round(time.time() * 1000))
+        while True:
+            millis = int(round(time.time() * 1000))
+            if millis-prev_millis>500:
+                i+=1
+                prev_millis = millis
+                lidarData = self.client.getLidarData();
+                if (len(lidarData.point_cloud) < 3):
+                    print("\tNo points received from Lidar data")
                 else:
-                    for index,point in enumerate(scan):
-                        scan[index] = np.add(point,self.movement)
+                    scan = self.parse_lidarData(lidarData)
+                    
+                    if not hasattr(self,'scans'):
+                        self.scans = scan
+                        self.distances = np.sqrt(np.sum(np.multiply(scan,scan),axis=1))
+                    else:
+                        scan = np.add(scan,np.tile(self.position,(scan.shape[0],1)))
+                            
+                        source = o3d.geometry.PointCloud()
+                        source.points = o3d.utility.Vector3dVector(scan)
+                        source = source.voxel_down_sample(voxel_size=1)
+                        source.estimate_normals()
                         
-                    source = o3d.geometry.PointCloud()
+                        target = o3d.geometry.PointCloud()
+                        target.points = o3d.utility.Vector3dVector(self.scans)
+                        target = target.voxel_down_sample(voxel_size=1)
+                        target.estimate_normals()
+                        
+                        threshold = 10
+                        trans_init = np.identity(4)
+                        
+                        reg_p2p = o3d.registration.registration_icp(
+                        source, target, threshold, trans_init,
+                        o3d.registration.TransformationEstimationPointToPlane())
+                        
+                        translation = reg_p2p.transformation[0:3,3]
+                        rotation = reg_p2p.transformation[0:3,0:3]
+                        self.position = np.add(self.position,translation)
+                       
+                        scan = np.transpose(np.matmul(rotation,np.transpose(scan)))
+                        scan = np.add(scan,np.tile(translation,(scan.shape[0],1)))
+                        self.scans = np.vstack((self.scans,scan))
+                        
+                        vectors = np.subtract(scan,np.tile(self.position,(scan.shape[0],1)))
+                        self.distances = np.hstack((self.distances,np.sqrt(np.sum(np.multiply(vectors,vectors),axis=1))))
+                        
+                    show = o3d.geometry.PointCloud()
+                    show.points = o3d.utility.Vector3dVector(self.scans)
+                    colors = cm.jet(self.distances.flatten()/np.max(self.distances))
+                    colors = colors[:,0:3]
+                    show.colors = o3d.utility.Vector3dVector(colors)
+                                  
+                    drone = mesh_sphere.sample_points_uniformly()
+                    drone_points = np.array(drone.points)
+                    drone_points = np.add(drone_points,np.tile(self.position,(drone_points.shape[0],1)))
+                    drone.points = o3d.utility.Vector3dVector(drone_points)       
+                    
+                    param = vis.get_view_control().convert_to_pinhole_camera_parameters()
+                    vis.clear_geometries()
+                    vis.add_geometry(show+drone)
+                    vis.get_view_control().convert_from_pinhole_camera_parameters(param)
 
-                    source.points = o3d.utility.Vector3dVector(scan)
-                    source = source.voxel_down_sample(voxel_size=1)
-                    source.estimate_normals()
-                    
-                    target = o3d.geometry.PointCloud()
-                    target.points = o3d.utility.Vector3dVector(self.scans)
-                    target = target.voxel_down_sample(voxel_size=1)
-                    target.estimate_normals()
-                    
-                    threshold = 10
-                    trans_init = np.identity(4)
-                    
-                    reg_p2p = o3d.registration.registration_icp(
-                    source, target, threshold, trans_init,
-                    o3d.registration.TransformationEstimationPointToPlane())
-                    print(reg_p2p)
-                    print("Transformation is:")
-                    print(reg_p2p.transformation)
-                    translation = reg_p2p.transformation[0:3,3]
-                    rotation = reg_p2p.transformation[0:3,0:3]
-                    for index,point in enumerate(scan):
-                        scan[index] = np.matmul(rotation,point)
-                        scan[index] = np.add(point,translation)
-                    self.scans = np.vstack((self.scans,scan))
-                    self.movement = np.add(self.movement,translation)
                 
-#                if not hasattr(self,'distances'):
-#                    self.distances = distance
-#                else:
-#                    self.distances = np.vstack((self.distances,distance))
-            time.sleep(0.5)
-            
+            vis.poll_events()
+            vis.update_renderer()
+
             
     def parse_lidarData(self, data):
-
         # reshape array of floats to array of [X,Y,Z]
         points = np.array(data.point_cloud, dtype=np.dtype('f4'))
         points = np.reshape(points, (int(points.shape[0]/3), 3))
-        
-    
-        # transform from local to global reference frame
-#        position = np.array([data.pose.position.x_val,data.pose.position.y_val,data.pose.position.z_val])
+
         rotation = R.from_quat([data.pose.orientation.x_val,data.pose.orientation.y_val,data.pose.orientation.z_val,data.pose.orientation.w_val]).as_matrix()
-        
-        distances = np.zeros((points.shape[0],1))
-        
-        for index in range(len(points)):
-            points[index] = points[index]*float(np.random.randint(0,20)+90)/100.
-            points[index] = np.matmul(rotation,points[index])
-#            points[index] = np.add(position,points[index])
-            
-#            vector = np.subtract(points[index],position)
-#            distances[index] = math.sqrt(np.dot(vector,vector))
-        
-        return points#,distances
+        points = np.transpose(np.matmul(rotation,np.transpose(points))) 
+        return points
 
     def write_lidarData_to_disk(self, points):
         # TODO
         print("not yet implemented")
 
     def stop(self):
-
-        airsim.wait_key('Press any key to reset to original state')
 
         self.client.armDisarm(False)
         self.client.reset()
@@ -156,21 +151,23 @@ if __name__ == "__main__":
   
     args = arg_parser.parse_args(args)    
     lidarTest = LidarTest()
+    
+
+    
     try:
         lidarTest.execute()
     finally:
         lidarTest.stop()
-        
-    print(lidarTest.movement)
-    np.savetxt('coords.txt',lidarTest.scans)
+
+#    print(lidarTest.position)
+#    np.savetxt('coords.txt',lidarTest.scans)
 #    np.savetxt('distances.txt',lidarTest.distances)
-#    
 #    colors = cm.jet(lidarTest.distances.flatten()/np.max(lidarTest.distances))
 #    colors = colors[:,0:3]
-    pcd = o3d.geometry.PointCloud()
-    pcd.points = o3d.utility.Vector3dVector(lidarTest.scans)
+#    pcd = o3d.geometry.PointCloud()
+#    pcd.points = o3d.utility.Vector3dVector(lidarTest.scans)
 #    pcd.colors = o3d.utility.Vector3dVector(colors)
-    
+#    
 #    downpcd = pcd.voxel_down_sample(voxel_size=1)
-    o3d.visualization.draw_geometries([pcd])
+#    o3d.visualization.draw_geometries([downpcd])
         
