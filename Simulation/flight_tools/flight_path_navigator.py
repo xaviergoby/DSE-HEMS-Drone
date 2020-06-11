@@ -189,6 +189,8 @@ if __name__ == "__main__":
 	                  (35, 35, -1), (40,  40, -1), (45, 45, -1),
 	                  (50, 35, -1), (55,  40, -1), (60, 45, -1)]
 	
+	# [[0, 0, -5], [5, 0, -5], [10, 0, -5]]
+	
 	drone_nav.nav_path_way_points(path_waypoints)
 	time.sleep(10)
 	drone_nav.save_lidar_data()

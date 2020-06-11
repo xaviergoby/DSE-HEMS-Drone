@@ -1,4 +1,5 @@
 import airsim
+from Sensors.radar_optical_flow import setup_path
 
 # boxsize	The overall size of the square box to survey
 # stripewidth	How far apart to drive the swim lanes, this can depend on the type of camera lens , for example.
@@ -11,6 +12,8 @@ class SurveyNavigator:
 		self.velocity = velocity # 5
 		self.client = airsim.MultirotorClient()
 		self.client.confirmConnection()
+		self.client.simEnableWeather(True)
+		self.client.simSetWeatherParameter(airsim.WeatherParameter.Fog, 0.85)
 		self.client.enableApiControl(True)
 		
 	def start(self, take_off_time_duration=None):
