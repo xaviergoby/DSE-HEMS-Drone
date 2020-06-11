@@ -7,9 +7,9 @@ import sys
 import math
 import argparse
 import numpy as np
-from Simulation.subsystems_integration.lidar_sensor_sub_sys import LiDaRSensorSubSystem
-from Simulation.subsystems_integration.flight_path_nav_sub_sys import FlightPathNavSubSystem
-from Simulation.subsystems_integration.optical_sensor_sub_sys import OpticalSensorSubSystem
+from lidar_sensor_sub_sys import LiDaRSensorSubSystem
+from flight_path_nav_sub_sys import FlightPathNavSubSystem
+from optical_sensor_sub_sys import OpticalSensorSubSystem
 
 
 class DroneMainSystem(LiDaRSensorSubSystem, FlightPathNavSubSystem, OpticalSensorSubSystem):
