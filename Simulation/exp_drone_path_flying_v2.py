@@ -1,7 +1,8 @@
 import sys
 import time
 
-import setup_path
+# import setup_path
+from Sensors.radar_optical_flow import setup_path
 import airsim
 import datetime
 
@@ -15,6 +16,8 @@ def print_position(client):
 
 client = airsim.MultirotorClient()
 client.confirmConnection()
+client.simEnableWeather(True)
+client.simSetWeatherParameter(airsim.WeatherParameter.Fog, 0.50)
 client.enableApiControl(True)
 client.armDisarm(True)
 
@@ -23,8 +26,8 @@ print_position(client)
 landed = client.getMultirotorState().landed_state
 if landed == airsim.LandedState.Landed:
 	print("taking off...")
-	client.takeoffAsync().join()
-	# client.takeoffAsync(timeout_sec=3).join()
+	# client.takeoffAsync().join()
+	client.takeoffAsync(timeout_sec=3).join()
 	# client.takeoffAsync(timeout_sec=3)
 else:
 	client.hoverAsync().join()

@@ -10,6 +10,8 @@ import cv2
 # connect to the AirSim simulator
 client = airsim.MultirotorClient()
 client.confirmConnection()
+client.simEnableWeather(True)
+client.simSetWeatherParameter(airsim.WeatherParameter.Fog, 0.85)
 client.enableApiControl(True)
 client.armDisarm(True)
 
