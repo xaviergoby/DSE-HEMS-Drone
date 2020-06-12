@@ -50,7 +50,7 @@ def vehicle_to_body_reference_frame(x_v, y_v, z_v, cg):
    """
     x_b = cg[0] - y_v
     y_b = cg[1] - x_v
-    z_b = cg[2] + z_v
+    z_b = cg[2] - z_v
     return x_b, y_b, z_b
 
 
@@ -160,12 +160,20 @@ for column in list_of_hashes:
     right = column.get('Yb [m]') + (column.get('w [m]') / 2.)
     bottom = column.get('Zb [m]') - (column.get('h [m]') / 2.)
     top = column.get('Zb [m]') + (column.get('h [m]') / 2.)
+    top, bottom = bottom, top
     rect = geometry.Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
     x, y = rect.exterior.xy
     plt.fill(x, y, alpha=0.5, fc='red', ec='black')
     plt.axis('square')
     area = area + rect.area
     rects.append(rect)
+plt.axis([-0.45, 0.45, -0.1, 0.32])
+plt.gca().invert_yaxis()
+plt.gca().invert_xaxis()
+plt.title("Drone component distribution front view")
+plt.xlabel("y axis in body reference frame")
+plt.ylabel("z axis in body reference frame")
+plt.savefig('figures/front_view.pdf', format = "pdf")
 plt.show()
 
 frontal_area = ops.unary_union(rects)
@@ -191,6 +199,13 @@ for column in list_of_hashes:
     plt.axis('square')
     area = area + rect.area
     rects.append(rect)
+plt.axis([-0.36, 0.36, -0.35, 0.35])
+plt.gca().invert_yaxis()
+plt.gca().invert_xaxis()
+plt.title("Drone component distribution top view")
+plt.xlabel("y axis in body reference frame")
+plt.ylabel("x axis in body reference frame")
+plt.savefig('figures/top_view.pdf', format = "pdf")
 plt.show()
 
 top_area = ops.unary_union(rects)
