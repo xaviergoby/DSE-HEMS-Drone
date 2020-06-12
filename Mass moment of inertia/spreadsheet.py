@@ -111,7 +111,7 @@ z = np.array(sheet.get('E2:E999'), dtype=float)
 c_o_g = center_of_gravity(m, x, y, z)
 c_o_g_for_cell = [[c_o_g[0]], [c_o_g[1]], [c_o_g[2]]]
 # update the corresponding cell G2
-sheet.update('J2', c_o_g_for_cell)
+sheet.update('L2', c_o_g_for_cell)
 
 # update the positions of components with respect to the center of gravity
 
@@ -122,7 +122,7 @@ for column in list_of_hashes:
     cellvalues.append([Xb, Yb, Zb])
 
 # update the cells in the sheet
-sheet.update('K2', cellvalues)
+sheet.update('M2', cellvalues)
 
 # re import sheet to get new values # lazy method
 sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
@@ -147,7 +147,7 @@ for column in list_of_hashes:
     InertiaTensor = InertiaTensor + mass_moment_of_inertia_steiner(m, x, y, z)
 
 # update the cells in the sheet
-sheet.update('O5', InertiaTensor.tolist())
+sheet.update('Q5', InertiaTensor.tolist())
 
 # find the frontal area of the drone
 
@@ -173,7 +173,7 @@ frontal_area = ops.unary_union(rects)
 # find the overlapped area
 
 # update the corresponding cell R2
-sheet.update('R2', str(frontal_area.area))
+sheet.update('T2', str(frontal_area.area))
 # find the top area of the drone
 
 # create a Polygon object for each cuboid
@@ -198,5 +198,5 @@ top_area = ops.unary_union(rects)
 # find the overlapped area
 
 # update the corresponding cell S2
-sheet.update('S2', str(top_area.area))
+sheet.update('U2', str(top_area.area))
 print("The script has finished.")
