@@ -156,8 +156,8 @@ rects = []
 area = 0.0
 for column in list_of_hashes:
     # find bounding points
-    left = column.get('Xb [m]') - (column.get('w [m]') / 2.)
-    right = column.get('Xb [m]') + (column.get('w [m]') / 2.)
+    left = column.get('Yb [m]') - (column.get('w [m]') / 2.)
+    right = column.get('Yb [m]') + (column.get('w [m]') / 2.)
     bottom = column.get('Zb [m]') - (column.get('h [m]') / 2.)
     top = column.get('Zb [m]') + (column.get('h [m]') / 2.)
     rect = geometry.Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
@@ -181,10 +181,10 @@ rects = []
 area = 0.0
 for column in list_of_hashes:
     # find bounding points
-    left = column.get('Xb [m]') - (column.get('w [m]') / 2.)
-    right = column.get('Xb [m]') + (column.get('w [m]') / 2.)
-    bottom = column.get('Yb [m]') - (column.get('d [m]') / 2.)
-    top = column.get('Yb [m]') + (column.get('d [m]') / 2.)
+    left = column.get('Yb [m]') - (column.get('w [m]') / 2.)
+    right = column.get('Yb [m]') + (column.get('w [m]') / 2.)
+    bottom = column.get('Xb [m]') - (column.get('d [m]') / 2.)
+    top = column.get('Xb [m]') + (column.get('d [m]') / 2.)
     rect = geometry.Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
     x, y = rect.exterior.xy
     plt.fill(x, y, alpha=0.5, fc='green', ec='black')
