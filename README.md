@@ -1,14 +1,41 @@
 # Design Synthesis Exercise (DSE) - Helicopter Emergency Medical Services (HEMS) Drone
+
+***
 **Group Number:** 5     
 **Period:** Spring 2020     
 **University:** Delft University of Technology (TU Delft)   
 **Faculty:** Aerospace Engineer    
 **Program/Degree:** Bachelors of Aerospace Engineer (BSc AE)
 
-**Description:**     
+***
+
+**Objective:**     
 To design a drone capable of performing a reconnaissance of the law few hundred meters of an approach 
 (by a HEMS helicopter) to ensure the operation safety of the approach and the landing of a HEMS helicopter
-operating in Instrument Meteorological Conditions (IMC).
+operating in Instrument Meteorological Conditions (IMC).        
+
+
+**Description:**    
+Drones have evolved significantly in the past years in terms of performance, such as max speed, controllability 
+and sensing capabilities. It seems feasible now to imagine a drone which could be deployed by a helicopter to 
+perform the functionality of a forward observer to aid in the approach and landing at new, unknown and 
+unprepared landing sites. Your task is to design such a system within a HEMS operational environment such that 
+minimal visibility landings become viable. Next to the design of the drone, operational procedures should also 
+be defined in a safe and robust manner.     
+
+**Context:**    
+Instrument Meteorological Conditions (IMC) often frustrate the operation of helicopters, especially with 
+regards to approach and landing operations at remote, unknown areas. Drones have evolved significantly in 
+the past years in terms of performance, such as max speed, controllability and sensing capabilities. It seems 
+feasible now to imagine a drone which could be deployed by a helicopter to perform the functionality of a 
+forward observer to aid in the approach and landing at new, unknown and unprepared landing sites. Sensors, such 
+as radars used in cars, LIDAR and IR sensors can map the surrounding area in 3D within limited range. Thus, a 
+safe approach path and landing site can be explored, and guidance cues can be organised, for the drone making 
+a safe approach and landing operation possible even with limited visibility for the “mother” helicopter. The 
+key issue is that the criticality of performing such an approach first with a relatively cheap and expendable 
+drone is thus reduced dramatically.
+
+***     
 
 **Project Current Phase/Status:**   
 In Research & Development  
@@ -24,6 +51,8 @@ Continuously evolving to serve not only its original purpose as a state-of-the-a
 engine, today it gives creators across industries the freedom and control to deliver cutting-edge 
 content, interactive experiences, and immersive virtual worlds." [main page](https://www.unrealengine.com/en-US/?sessionInvalidated=true).
 
+***
+
 
 <ins>**Team Members:**</ins>    
 - Jilles Andringa
@@ -38,8 +67,8 @@ content, interactive experiences, and immersive virtual worlds." [main page](htt
 - Joost Waaijer
 
 <ins>**Tutor Coaches:**</ins>   
-- Ronald van Gent   
-- Simon Watson 
-- Johan Bijleveld 
+- Ir. R. Van Gent   
+- Dr. J.C. Bijleveld      
+- Prof.dr. S.J. Watson   
 
 
