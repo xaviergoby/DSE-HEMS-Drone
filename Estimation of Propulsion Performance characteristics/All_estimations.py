@@ -1,7 +1,6 @@
 
 '''
-This is not finished but you can run the four individual estimation programs individually already,
-just change the constants/parameters in the Governing_constants_and_equations.py file.
+This is not finished so just run the All_estimations_noGUI and that will output a file with the results.
 '''
 
 import Governing_constants_and_functions as G
@@ -55,6 +54,7 @@ while True:  # Event Loop
     if event in  (None, 'Exit'):
         break
     if event == 'Run':
+        values_fl = {k: float(v) for k, v in values.items() if v != values['FileName']}
         A = float(values['A'])  # Aspect ratio, 'typical' value taken from paper but we can tailor it when applicable to our propeller
         EPSILON = float(values['epsilon'])  # Downwash correction factor, also taken from paper
         LAMBDA = float(values['lambda']) # Correction coefficient of the blade airfoil area, also taken from paper
@@ -72,7 +72,7 @@ while True:  # Event Loop
         rho = p / (R * Temp)  # ISA sea-level density kg/m^3
 
         # General Parameters
-        W = float(values['W']) * g  # Total weight in Newtons
+        W = values_fl['W'] * g  # Total weight in Newtons
         n_r = int(values['n_r'])
 
         # Propeller parameters
@@ -83,7 +83,7 @@ while True:  # Event Loop
         est_M = 0  #
 
         # Motor parameters
-        K_V0 = int(values['K_V0'])  # Nominal no-load motor constant in r/min/V (RPM/V, revolutions per minute per volt)
+        G.K_V0 = int(values['K_V0'])  # Nominal no-load motor constant in r/min/V (RPM/V, revolutions per minute per volt)
         I_m_max = float(values['I_m_max'])  # Maximum motor current in Amps
         I_m0 = float(values['I_m0'])  # Motor nominal no-load current in Amps
         U_m0 = float(values['U_m0'])  # Motor nominal no-load voltage in Volts
