@@ -121,7 +121,7 @@ while True:  # Event Loop
                     f'Duty cycle is: {sigma * 100} % \n'
                     f'Propeller RPM is: {N} \n'
                     f'ESC current is: {I_e} A \n'
-                    f'ESC voltage is: {U_e} V'
+                    f'ESC voltage is: {U_e} V \n'
                     f'Battery current is: {I_b} A \n'
                     f'Efficiency is: {eff * 100} % \n \n'
                     
