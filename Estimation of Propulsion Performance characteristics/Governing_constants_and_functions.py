@@ -29,7 +29,7 @@ R = 287.05 # Gas constant of air
 rho = p/(R*Temp) # ISA sea-level density kg/m^3
 
 # General Parameters
-W = 3.5 * g * 1.06 # Total weight in Newtons
+W = 3.5 * g # Total weight in Newtons
 n_r = 4
 
 # Propeller parameters
@@ -55,11 +55,12 @@ I_c = 1 # Control current supplied to the flight controller in Amps, usually 1 A
 #G_e = blah # Weight of ESC, not really relevant for this calculations since we start with total weight
 
 ### Battery parameters
-C_b = 5400 # Battery capacity in mAh
+C_b = 10000 # Battery capacity in mAh
 R_b = 0.0078 # Battery internal resistance in Ohms
 U_b = 22.8 # Battery voltage in Volts
 K_b = 45 # Maximum discharge rate in Coulombs
-C_min = 0.2 * C_b # Basically just calculating minimum battery capacity assuming a DoD, in this case assuming 80% DoD
+DOD = 0.8
+C_min = (1-DOD) * C_b # Basically just calculating minimum battery capacity assuming a DoD, in this case assuming 80% DoD
 #G_b = blah # Also irrelevant like the others for now
 
 ### Propeller Model equations
