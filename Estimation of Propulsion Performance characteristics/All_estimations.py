@@ -8,6 +8,7 @@ import Governing_constants_and_functions as G
 import PySimpleGUI as sg
 import numpy as np
 import Hover_estimation as H
+import Max_speed_and_range_estimation as Max
 
 sg.theme('BluePurple')
 
@@ -21,7 +22,7 @@ layout = [[sg.Frame('Estimated parameters related mostly to propeller aerodynami
         [sg.Frame('Drone and Environment parameters:', [[
         sg.T('Temperature in Kelvin:'), sg.In('298.15', key='Temp', size=(7,2)),
         sg.T('Pressure in Pa:'), sg.In('101325', key='p', size=(7, 2)),
-        sg.T('Mass in kg:'), sg.In('1.5', key='W', size=(4,2)),
+        sg.T('Mass in kg:'), sg.In('3.5', key='W', size=(4,2)),
         sg.T('Number of rotors'), sg.In('4', key='n_r', size=(3,2)) ]] )],
 
         [sg.Frame('Propeller Parameters', [[
@@ -110,17 +111,29 @@ while True:  # Event Loop
         C_d = C_fd + ((np.pi * A * K_0 ** 2) * (EPSILON * np.arctan(H_p / (np.pi * D_p)) - ALPHA_0) ** 2) / (
                     e * (np.pi * A + K_0) ** 2)
 
-        T_b, eff, P_req, sigma, N, I_e, U_e, I_b = H.hover_est(G.W, G.n_r, G.I_c, G.U_b)
+        T_b, eff, P_req, sigma, N, I_e, U_e, I_b = H.hover_est(float(values['W']) * g, float(values['n_r']), float(values['I_c']), float(values['U_b']))
+        max_V, max_range, pitch_opt, V_opt, P_req_opt, eff_opt, T_b_opt = Max.speed_range_est(n_r=int(values['n_r']), U_b=float(values['U_b']))
 
-        f = open('Input_and_Output_text_files/' + values['FileName'] + '.txt', 'w+')
-        f.write(    'Power required is' + str(P_req) + 'W' +
-                    '\n Hovering endurance is:' + str(T_b) + 'minutes' +
-                    '\n Duty cycle is:'+ str(sigma * 100) + '%' +
-                    'Propeller RPM is:'+ str(N) +
-                    'ESC current is'+ str(I_e) + 'A' +
-                    'ESC voltage is'+ str(U_e) + 'V' +
-                    'Battery current is'+ str(I_b) + 'A' +
-                    'Efficiency is'+ str(eff * 100) + '%' )
+        with open('Input_and_Output_text_files/' + values['FileName'] + '.txt', 'w+') as f:
+            f.write('Hover estimation results:'
+                    f'Power required is: {P_req} W \n'
+                    f'Hovering endurance is: {T_b}  minutes \n'
+                    f'Duty cycle is: {sigma * 100} % \n'
+                    f'Propeller RPM is: {N} \n'
+                    f'ESC current is: {I_e} A \n'
+                    f'ESC voltage is: {U_e} V'
+                    f'Battery current is: {I_b} A \n'
+                    f'Efficiency is: {eff * 100} % \n \n'
+                    
+                    'Maximum speed and range estimation results: \n'
+                    f'Maximum speed is: {max_V} m/s \n'
+                    f'Maximum range is: {max_range}  m \n'
+                    f'Pitch for max range condition: {pitch_opt} deg \n'
+                    f'Speed for max range condition: {V_opt} m/s \n'
+                    f'Power required at max range condition: {P_req_opt} W \n'
+                    f'Efficiency at max range condition: {eff_opt * 100} % \n'
+                    f'Flight time at max range condition: {T_b_opt} minutes \n'
+                    )
 
 
 window.close()
