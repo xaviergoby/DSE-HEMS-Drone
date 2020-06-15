@@ -4,8 +4,10 @@ This is not finished but you can run the four individual estimation programs ind
 just change the constants/parameters in the Governing_constants_and_equations.py file.
 '''
 
+import Governing_constants_and_functions as G
 import PySimpleGUI as sg
 import numpy as np
+import Hover_estimation as H
 
 sg.theme('BluePurple')
 
@@ -24,7 +26,7 @@ layout = [[sg.Frame('Estimated parameters related mostly to propeller aerodynami
 
         [sg.Frame('Propeller Parameters', [[
         sg.T('Blade number:'), sg.In('2', key='B_p', size=(2,2)), sg.T('Diameter in inches:'), sg.In('10', key='D_p', size=(4,2)),
-        sg.T('Pitch in inches:'), sg.In('4.5', key='H_p', size=(4,2)) ]] )],
+        sg.T('Pitch in inches:'), sg.In('4.5', key='H_p', size=(4,2)), sg.T('Set this to one if you want automatic estimation of propeller coefficients:'), sg.In('0', key='est', size=(3,2)) ]] )],
 
         [sg.Frame('Motor Parameters', [[
         sg.T('Motor constant (K_V0) in RPM/V:'), sg.In('400', key='K_V0', size=(5,2)), sg.T('Maximum current in A'), sg.In('30', key='I_m_max', size=(4,2))],
@@ -39,6 +41,8 @@ layout = [[sg.Frame('Estimated parameters related mostly to propeller aerodynami
         [sg.Frame('Battery Parameters', [[
         sg.T('Battery capacity in mAh:'), sg.In('5000', key='C_b', size=(5,2)), sg.T('Battery internal resistance'), sg.In('0.0078', key='R_b', size=(6,2))],
         [sg.T('Battery voltage in V'), sg.In('22.8', key='U_b', size=(5,2)), sg.T('Batterry Depth of discharge (as a decimal)'), sg.In('0.8', key='DOD', size=(3,2)) ]] )],
+
+        [sg.T('Name for the output file'), sg.In(key='FileName', size=(25,2))],
 
         [sg.Button('Run'), sg.Button('Exit')] ]
 
@@ -67,7 +71,7 @@ while True:  # Event Loop
         rho = p / (R * Temp)  # ISA sea-level density kg/m^3
 
         # General Parameters
-        W = 3.5 * g  # Total weight in Newtons
+        W = float(values['W']) * g  # Total weight in Newtons
         n_r = int(values['n_r'])
 
         # Propeller parameters
@@ -105,6 +109,18 @@ while True:  # Event Loop
         # Drag coefficient, estimated from paper and other coefficients/factors
         C_d = C_fd + ((np.pi * A * K_0 ** 2) * (EPSILON * np.arctan(H_p / (np.pi * D_p)) - ALPHA_0) ** 2) / (
                     e * (np.pi * A + K_0) ** 2)
+
+        T_b, eff, P_req, sigma, N, I_e, U_e, I_b = H.hover_est(G.W, G.n_r, G.I_c, G.U_b)
+
+        f = open('Input_and_Output_text_files/' + values['FileName'] + '.txt', 'w+')
+        f.write(    'Power required is' + str(P_req) + 'W' +
+                    '\n Hovering endurance is:' + str(T_b) + 'minutes' +
+                    '\n Duty cycle is:'+ str(sigma * 100) + '%' +
+                    'Propeller RPM is:'+ str(N) +
+                    'ESC current is'+ str(I_e) + 'A' +
+                    'ESC voltage is'+ str(U_e) + 'V' +
+                    'Battery current is'+ str(I_b) + 'A' +
+                    'Efficiency is'+ str(eff * 100) + '%' )
 
 
 window.close()
