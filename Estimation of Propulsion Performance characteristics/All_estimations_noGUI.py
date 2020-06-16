@@ -6,7 +6,8 @@ import Max_speed_and_range_estimation as Max
 T_b, eff, P_req, sigma, N_hover, I_e, U_e, I_b = H.hover_est(G.W, G.n_r, G.I_c, G.U_b)
 max_V, max_range, pitch_opt, V_opt, P_req_opt, eff_opt, T_b_opt = Max.speed_range_est(G.n_r, U_b=G.U_b)
 
-FileName = 'hello' # Edit this to name the output file whatever you want
+
+FileName = 'hello2' # Edit this to name the output file whatever you want
 
 with open(f'Input_and_Output_text_files/{FileName}.txt', 'w+') as f:
     f.write('Hover estimation results: \n'
