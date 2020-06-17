@@ -7,9 +7,9 @@ import sys
 import math
 import argparse
 import numpy as np
-from lidar_sensor_sub_sys import LiDaRSensorSubSystem
-from flight_path_nav_sub_sys import FlightPathNavSubSystem
-from optical_sensor_sub_sys import OpticalSensorSubSystem
+from Simulation.subsystems_integration.lidar_sensor_sub_sys import LiDaRSensorSubSystem
+from Simulation.subsystems_integration.flight_path_nav_sub_sys import FlightPathNavSubSystem
+from Simulation.subsystems_integration.optical_sensor_sub_sys import OpticalSensorSubSystem
 
 
 class DroneMainSystem(LiDaRSensorSubSystem, FlightPathNavSubSystem, OpticalSensorSubSystem):
@@ -133,22 +133,22 @@ if __name__ == "__main__":
 		drone.run_lidar_data_collection()
 		drone.update_o3d_window()
 
-		# bgr_img = drone.get_optical_camera_3d_rgb_img()
-		# rgb_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2RGB)
-		# rgb_img_rotated = np.rot90(np.rot90(rgb_img))
-		# gray_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2GRAY)
-		# hist_equal_grey_img = cv2.equalizeHist(gray_img)
-		# hist_equal_img = cv2.cvtColor(hist_equal_grey_img, cv2.COLOR_GRAY2RGB)
-		# hist_equal_img_rotated = np.rot90(np.rot90(hist_equal_img))
-		# cv2_window_name = "Histogram Equalization of RGB Image Capture In Fog (fog pct = {0})".format(drone.fog_pct)
-		# cv2.namedWindow(cv2_window_name, cv2.WINDOW_NORMAL)
-		# combined_hist_equalized_rgb_image_array = np.hstack((bgr_img, hist_equal_img))
-		# cv2.imshow(cv2_window_name, combined_hist_equalized_rgb_image_array)
+	# bgr_img = drone.get_optical_camera_3d_rgb_img()
+	# rgb_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2RGB)
+	# rgb_img_rotated = np.rot90(np.rot90(rgb_img))
+	# gray_img = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2GRAY)
+	# hist_equal_grey_img = cv2.equalizeHist(gray_img)
+	# hist_equal_img = cv2.cvtColor(hist_equal_grey_img, cv2.COLOR_GRAY2RGB)
+	# hist_equal_img_rotated = np.rot90(np.rot90(hist_equal_img))
+	# cv2_window_name = "Histogram Equalization of RGB Image Capture In Fog (fog pct = {0})".format(drone.fog_pct)
+	# cv2.namedWindow(cv2_window_name, cv2.WINDOW_NORMAL)
+	# combined_hist_equalized_rgb_image_array = np.hstack((bgr_img, hist_equal_img))
+	# cv2.imshow(cv2_window_name, combined_hist_equalized_rgb_image_array)
 
-		# if cv2.waitKey(1) & 0xFF == ord('q'):
-		# 	cv2.destroyAllWindows()
-		# 	break
-		# else:
-		# 	continue
+	# if cv2.waitKey(1) & 0xFF == ord('q'):
+	# 	cv2.destroyAllWindows()
+	# 	break
+	# else:
+	# 	continue
 
 	drone.end(3)
