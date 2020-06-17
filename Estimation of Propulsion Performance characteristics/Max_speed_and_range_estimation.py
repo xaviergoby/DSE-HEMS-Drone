@@ -8,49 +8,55 @@ C1 = 3
 C2 = 1.5
 S = 0.1 # They never say what number they use for area which is really annoying so we'll have to experiment
 theta_max = 40 * np.pi/180 # max pitch angle, later we can just take this from the calcuation done in max_load_estimation
+def speed_range_est(n_r, U_b, C1=3, C2=1.5, S=0.1, theta_max = 40 * np.pi/180):
+    def C_D(theta):
+        return C1 * (1 - (np.cos(theta)) ** 3) + C2 * (1 - (np.sin(theta)) ** 3)
 
-def C_D(theta):
-    return C1 * (1 - (np.cos(theta)) ** 3) + C2 * (1 - (np.sin(theta)) ** 3)
+    def V (theta):
+        return np.sqrt( (2 * G.W * np.tan(theta)) / (G.rho * S * C_D(theta)) )
 
-def V (theta):
-    return np.sqrt( (2 * G.W * np.tan(theta)) / (G.rho * S * C_D(theta)) )
+    def N(theta):
+        return G.N(T=G.W/(G.n_r * np.cos(theta)))
 
-def N(theta):
-    return G.N(T=G.W/(G.n_r * np.cos(theta)))
+    def M(theta):
+        return G.M(T=G.W/(G.n_r * np.cos(theta)), N=N(theta))
 
-def M(theta):
-    return G.M(T=G.W/(G.n_r * np.cos(theta)), N=N(theta))
+    def U_m(theta):
+        return G.f_U_m(N=N(theta), M=M(theta))
 
-def U_m(theta):
-    return G.f_U_m(N=N(theta), M=M(theta))
+    def I_m(theta):
+        return G.f_I_m(N=N(theta), M=M(theta))
 
-def I_m(theta):
-    return G.f_I_m(N=N(theta), M=M(theta))
+    def sigma(theta):
+        return G.f_sigma(U_m=U_m(theta), I_m=I_m(theta))
 
-def sigma(theta):
-    return G.f_sigma(U_m=U_m(theta), I_m=I_m(theta))
+    def I_e(theta):
+        return G.f_I_e(sigma=sigma(theta), I_m=I_m(theta))
 
-def I_e(theta):
-    return G.f_I_e(sigma=sigma(theta), I_m=I_m(theta))
+    def I_b(theta):
+        return G.n_r * I_e(theta) + G.I_c
 
-def I_b(theta):
-    return G.n_r * I_e(theta) + G.I_c
+    def T_fly(theta):
+        return G.f_T_b(I_b(theta))
 
-def T_fly(theta):
-    return G.f_T_b(I_b(theta))
-
-def range(theta):
-    return 60 * V(theta) * T_fly(theta)
+    def range(theta):
+        return 60 * V(theta) * T_fly(theta)
 
 
 
-theta_values = np.linspace(0, theta_max, 300)
+    theta_values = np.linspace(0, theta_max, 300)
 
-Data_V = V(theta_values)
-Data_T_fly = T_fly(theta_values)
-Data_range = 60 * V(theta_values) * T_fly(theta_values)
-Data_C_D = C_D(theta_values)
-
+    Data_V = V(theta_values)
+    Data_T_fly = T_fly(theta_values)
+    Data_range = 60 * V(theta_values) * T_fly(theta_values)
+    Data_C_D = C_D(theta_values)
+    indx = np.where(Data_range == max(Data_range))[0]
+    max_range_pitch = theta_values[indx] * 180/np.pi
+    eff = (2 * np.pi * n_r * M(theta_values[indx]) * N(theta_values[indx]))/(U_b * I_b(theta_values[indx]) * 60)
+    P_req = 2 * 1/60 * np.pi * n_r * M(theta_values[indx]) * N(theta_values[indx])
+    T_b = G.f_T_b(I_b=I_b(theta_values[indx]))
+    return V(theta_max), max(Data_range), max_range_pitch, Data_V[indx], P_req, eff, T_b
+'''
 #print(Data_V)
 #print(Data_T_fly)
 #print(Data_range)
@@ -60,9 +66,10 @@ print('Max range is', max(Data_range), 'm')
 indx = np.where(Data_range == max(Data_range))[0]
 print('Pitch for max range is', theta_values[indx] * 180/np.pi, 'degrees')
 print('Velocity for max range is', Data_V[indx], 'm/s')
-print('RPM required is', N(theta_values[indx]))
+# print('RPM required is', N(theta_values[indx]))
 plt.plot(theta_values * 180/np.pi, Data_C_D)
 plt.plot()
 plt.show()
 
 print(C_D(0*np.pi/180))
+'''
