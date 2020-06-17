@@ -50,7 +50,7 @@ def vehicle_to_body_reference_frame(x_v, y_v, z_v, cg):
    """
     x_b = cg[0] - y_v
     y_b = cg[1] - x_v
-    z_b = cg[2] + z_v
+    z_b = cg[2] - z_v
     return x_b, y_b, z_b
 
 
@@ -111,7 +111,7 @@ z = np.array(sheet.get('E2:E999'), dtype=float)
 c_o_g = center_of_gravity(m, x, y, z)
 c_o_g_for_cell = [[c_o_g[0]], [c_o_g[1]], [c_o_g[2]]]
 # update the corresponding cell G2
-sheet.update('J2', c_o_g_for_cell)
+sheet.update('L2', c_o_g_for_cell)
 
 # update the positions of components with respect to the center of gravity
 
@@ -122,7 +122,7 @@ for column in list_of_hashes:
     cellvalues.append([Xb, Yb, Zb])
 
 # update the cells in the sheet
-sheet.update('K2', cellvalues)
+sheet.update('M2', cellvalues)
 
 # re import sheet to get new values # lazy method
 sheet = import_spreadsheet("Mass of components for mass moment inertia calculation")
@@ -147,7 +147,7 @@ for column in list_of_hashes:
     InertiaTensor = InertiaTensor + mass_moment_of_inertia_steiner(m, x, y, z)
 
 # update the cells in the sheet
-sheet.update('O5', InertiaTensor.tolist())
+sheet.update('Q5', InertiaTensor.tolist())
 
 # find the frontal area of the drone
 
@@ -156,16 +156,24 @@ rects = []
 area = 0.0
 for column in list_of_hashes:
     # find bounding points
-    left = column.get('Xb [m]') - (column.get('w [m]') / 2.)
-    right = column.get('Xb [m]') + (column.get('w [m]') / 2.)
+    left = column.get('Yb [m]') - (column.get('w [m]') / 2.)
+    right = column.get('Yb [m]') + (column.get('w [m]') / 2.)
     bottom = column.get('Zb [m]') - (column.get('h [m]') / 2.)
     top = column.get('Zb [m]') + (column.get('h [m]') / 2.)
+    top, bottom = bottom, top
     rect = geometry.Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
     x, y = rect.exterior.xy
     plt.fill(x, y, alpha=0.5, fc='red', ec='black')
     plt.axis('square')
     area = area + rect.area
     rects.append(rect)
+plt.axis([-0.45, 0.45, -0.1, 0.32])
+plt.gca().invert_yaxis()
+plt.gca().invert_xaxis()
+plt.title("Drone component distribution front view")
+plt.xlabel("y axis in body reference frame")
+plt.ylabel("z axis in body reference frame")
+plt.savefig('figures/front_view.pdf', format = "pdf")
 plt.show()
 
 frontal_area = ops.unary_union(rects)
@@ -173,7 +181,7 @@ frontal_area = ops.unary_union(rects)
 # find the overlapped area
 
 # update the corresponding cell R2
-sheet.update('R2', str(frontal_area.area))
+sheet.update('T2', str(frontal_area.area))
 # find the top area of the drone
 
 # create a Polygon object for each cuboid
@@ -181,16 +189,23 @@ rects = []
 area = 0.0
 for column in list_of_hashes:
     # find bounding points
-    left = column.get('Xb [m]') - (column.get('w [m]') / 2.)
-    right = column.get('Xb [m]') + (column.get('w [m]') / 2.)
-    bottom = column.get('Yb [m]') - (column.get('d [m]') / 2.)
-    top = column.get('Yb [m]') + (column.get('d [m]') / 2.)
+    left = column.get('Yb [m]') - (column.get('w [m]') / 2.)
+    right = column.get('Yb [m]') + (column.get('w [m]') / 2.)
+    bottom = column.get('Xb [m]') - (column.get('d [m]') / 2.)
+    top = column.get('Xb [m]') + (column.get('d [m]') / 2.)
     rect = geometry.Polygon([(left, top), (right, top), (right, bottom), (left, bottom)])
     x, y = rect.exterior.xy
     plt.fill(x, y, alpha=0.5, fc='green', ec='black')
     plt.axis('square')
     area = area + rect.area
     rects.append(rect)
+plt.axis([-0.36, 0.36, -0.35, 0.35])
+plt.gca().invert_yaxis()
+plt.gca().invert_xaxis()
+plt.title("Drone component distribution top view")
+plt.xlabel("y axis in body reference frame")
+plt.ylabel("x axis in body reference frame")
+plt.savefig('figures/top_view.pdf', format = "pdf")
 plt.show()
 
 top_area = ops.unary_union(rects)
@@ -198,5 +213,5 @@ top_area = ops.unary_union(rects)
 # find the overlapped area
 
 # update the corresponding cell S2
-sheet.update('S2', str(top_area.area))
+sheet.update('U2', str(top_area.area))
 print("The script has finished.")
