@@ -59,9 +59,9 @@ thrust_max = 3520 * (g/1000) # Put this number here if it is known, but it is no
 # Motor parameters
 K_V0 = 475 # Nominal no-load motor constant in r/min/V (RPM/V, revolutions per minute per volt)
 I_m_max = 27 # Maximum motor current in Amps
-I_m0 = 0.53 # Motor nominal no-load current in Amps
-U_m0 = 15 # Motor nominal no-load voltage in Volts
-R_m = 0.111 # Motor resistance in Ohms
+I_m0 = 0.2 # Motor nominal no-load current in Amps
+U_m0 = 10 # Motor nominal no-load voltage in Volts
+R_m = 0.105 # Motor resistance in Ohms
 #G_m = blah # # Weight of Motor, not really relevant for this calculations since we start with total weight
 
 ### ESC (Electronic speed converter) parameters
