@@ -1,0 +1,59 @@
+Hover estimation results: 
+Power required is: 446.00000000000006 W 
+Hovering endurance is: 14.762513133935105  minutes 
+Duty cycle is: 43.82362777380626 % 
+Propeller RPM is: 4038.5 
+ESC current is: 5.846522941823086 A 
+ESC voltage is: 22.60978848421512 V 
+Battery current is: 24.386091767292346 A 
+Efficiency is: 80.21541006012497 % 
+ 
+Maximum speed and range estimation results: 
+Maximum speed is: 14.651552684513172 m/s 
+Maximum range is: 8687.865932292743  m 
+Pitch for max range condition: [21.00334448] deg 
+Speed for max range condition: [11.65673014] m/s 
+Power required at max range condition: [525.85161479] W 
+Efficiency at max range condition: [79.5812913] % 
+Flight time at max range condition: [12.42181674] minutes 
+ 
+ 
+These are the input parameters that were used (refer to Governing_constants_and_functions.py for meaning and units): 
+A:              5 
+EPSILON:        0.85
+LAMBDA:         0.75
+ZETA:           0.5
+e:              0.83
+C_fd:           0.015
+ALPHA_0:        0 
+K_0:            6.11
+Temp:           298.15
+p:              101325
+g:              9.81
+R:              287.05
+rho:            1.1839251532625141
+W:              41.6925
+n_r:            4 
+B_p:            2 
+D_p:            0.3937
+H_p:            0.13462
+est_N:          0 
+est_M:          0 
+a_N:            1.56
+b_N:            2381
+a_M:            0.264
+b_M:            -169
+thrust_max:     34.531200000000005
+K_V0:           475
+I_m_max:        27
+I_m0:           0.2
+U_m0:           10
+R_m:            0.105
+I_e_max:        30
+R_e:            0.008
+I_c:            1 
+C_b:            7500
+R_b:            0.0078
+U_b:            22.8
+K_b:            45
+DOD:            0.8
