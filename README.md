@@ -1,7 +1,7 @@
 # Helicopter Emergency Medical Services (HEMS) Drone
 
 
-![HEMS LiDaR Demo](HEMSWorkingLiDaRDemo.gif)*<br>(Top Left) Thir-person view of Unreal Engine 4 & AirSim simulation of imported CATIA V5 drone design 3D model & custom made environment,<br> (Top Right) LiDAR & Iterative Closest Point (ICP) algorithm based autonomous navigation & environment mapping programmed in Python,<br> (Bottom Left) First-person on-board optical sensor (camera) view of foggy (85%) & rainy (85%) drone operating environment weather condition,<br> (Bottom Right) First-person on-board optical sensor (camera) view of post image dehazing preprocessing on the left-side recording*)
+![HEMS LiDaR Demo](HEMSWorkingLiDaRDemo.gif)*<br>(Top Left) Thir-person view of Unreal Engine 4 & AirSim simulation of imported CATIA V5 drone design 3D model & custom made environment,<br> (Top Right) LiDAR & Iterative Closest Point (ICP) algorithm based autonomous navigation & environment mapping programmed in Python,<br> (Bottom Left) First-person on-board optical sensor (camera) view of foggy (85%) & rainy (85%) drone operating environment weather condition,<br> (Bottom Right) First-person on-board optical sensor (camera) view of post image dehazing preprocessing on the left-side recording*
 
 ***
 **Group Number:** 5     
