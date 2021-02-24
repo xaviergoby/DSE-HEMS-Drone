@@ -1,5 +1,8 @@
 # Design Synthesis Exercise (DSE) - Helicopter Emergency Medical Services (HEMS) Drone
 
+
+[HEMS LiDaR Demo](HEMSWorkingLiDaRDemo.gif)
+
 ***
 **Group Number:** 5     
 **Period:** Spring 2020     
