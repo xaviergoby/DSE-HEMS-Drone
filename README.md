@@ -1,7 +1,7 @@
-# Design Synthesis Exercise (DSE) - Helicopter Emergency Medical Services (HEMS) Drone
+# Helicopter Emergency Medical Services (HEMS) Drone
 
 
-![HEMS LiDaR Demo](HEMSWorkingLiDaRDemo.gif)
+![HEMS LiDaR Demo](HEMSWorkingLiDaRDemo.gif)*<br>(Top Left) Thir-person view AirSim simulation of CATIA V5 designed drone flying, (Top Right) LiDAR mapping of environment, (Bottom Left) First-person on-board optical sensor (camera) view of foggy (85%) & rainy (85%) drone operating environment weather condition, (Bottom Right) First-person on-board optical sensor (camera) view post image dehazing preprocessing*)
 
 ***
 **Group Number:** 5     
